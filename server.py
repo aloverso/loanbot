@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 # APP_SECRET = os.environ['appSecret']
 VALIDATION_TOKEN = os.environ['validationToken']
-# PAGE_ACCESS_TOKEN = os.environ['pageAccessToken']
+PAGE_ACCESS_TOKEN = os.environ['pageAccessToken']
 # SERVER_URL = os.environ['serverURL']
 # SLACK_TOKEN = os.environ.get('SLACK_TOKEN', None)
 # SLACK_WEBHOOK_SECRET = os.environ.get('SLACK_WEBHOOK_SECRET')
@@ -77,50 +77,50 @@ def posthook():
 
     data = request.get_json()
 
-    # if data["object"] == "page":
-    #     for entry in data["entry"]:
-    #         for messaging_event in entry["messaging"]:
+    if data["object"] == "page":
+        for entry in data["entry"]:
+            for messaging_event in entry["messaging"]:
 
-    #             if messaging_event.get("message"):  # someone sent us a message
+                if messaging_event.get("message"):  # someone sent us a message
 
-    #                 sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
-    #                 recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
+                    sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
+                    recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     
-    #                 user = generate_or_find_user(sender_id)
-    #                 name = user['name']
+                    # user = generate_or_find_user(sender_id)
+                    # name = user['name']
 
-    #                 if 'text' in messaging_event["message"]:
-    #                     message_text = messaging_event["message"]["text"]  # the message's text
+                    if 'text' in messaging_event["message"]:
+                        message_text = messaging_event["message"]["text"]  # the message's text
 
-    #                     send_slack_message(ASK_OLIN, name, message_text, '')
+                        # send_slack_message(ASK_OLIN, name, message_text, '')
 
-    #                     send_message(sender_id, "Sent to Oliners! You'll hear back soon!")
+                        send_message(sender_id, message_text)
 
-    #                 elif 'attachments' in messaging_event["message"]:
-    #                     attachment_url = messaging_event["message"]["attachments"][0]["payload"]["url"]
-    #                     send_slack_message(ASK_OLIN, name, '', attachment_url)
+                    # elif 'attachments' in messaging_event["message"]:
+                    #     attachment_url = messaging_event["message"]["attachments"][0]["payload"]["url"]
+                    #     # send_slack_message(ASK_OLIN, name, '', attachment_url)
 
-    #                     send_message(sender_id, "Sent to Oliners! You'll hear back soon!")
+                    #     send_message(sender_id, "Sent to Oliners! You'll hear back soon!")
 
-    #                 else:
-    #                     send_message(sender_id, "Sorry, I can't read that message format!")
+                    else:
+                        send_message(sender_id, "Sorry, I can't read that message format!")
 
     return "ok", 200
 
-# def send_message(recipient_id, message_text):
-#     params = { "access_token": PAGE_ACCESS_TOKEN }
-#     headers = { "Content-Type": "application/json" }
-#     data = json.dumps({
-#         "recipient": {
-#             "id": recipient_id
-#         },
-#         "message": {
-#             "text": message_text
-#         }
-#     })
-#     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-#     if r.status_code != 200:
-#         print(r.status_code, r.text)
+def send_message(recipient_id, message_text):
+    params = { "access_token": PAGE_ACCESS_TOKEN }
+    headers = { "Content-Type": "application/json" }
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "text": message_text
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        print(r.status_code, r.text)
 
 # def list_channels():
 #     channels_call = slack_client.api_call("channels.list")
