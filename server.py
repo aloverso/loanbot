@@ -39,7 +39,7 @@ def posthook():
                     if 'text' in messaging_event["message"]:
                         message_text = messaging_event["message"]["text"]  # the message's text
 
-                        send_message(sender_id, determine_response(message_text))
+                        determine_response_and_send(sender_id, message_text)
 
                     elif 'attachments' in messaging_event["message"]:
 
@@ -53,14 +53,41 @@ def posthook():
 tools = ['screwdriver', 'drill', 'arduino']
 checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'checked out']
 
-def determine_response(message):
+def determine_response_and_send(sender_id, message):
     if any(word in message for word in checkout_words):
         for tool in tools:
             if tool in message:
-                return "Sounds like you want to check out a {}, is that correct?".format(tool)
-        return "What tool do you want to check out?"
+                send_quickreply_message(sender_id, "Sounds like you want to check out a {}, is that correct?".format(tool))
+        send_message(sender_id, "What tool do you want to check out?")
     else:
-        return "idk what you're sayin yo"
+        send_message(sender_id, "idk what you're sayin yo:" + message)
+
+def send_quickreply_message(recipient_id, message_text):
+    params = { "access_token": PAGE_ACCESS_TOKEN }
+    headers = { "Content-Type": "application/json" }
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "text": message_text,
+            "quick_replies":[
+                {
+                    "content_type":"text",
+                    "title":"yes",
+                    "payload":"DEVELOPER_DEFINED_PAYLOAD_YES"
+                },
+                {
+                    "content_type":"text",
+                    "title":"no",
+                    "payload":"DEVELOPER_DEFINED_PAYLOAD_NO"
+                }
+            ]
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        print(r.status_code, r.text)
 
 def send_message(recipient_id, message_text):
     params = { "access_token": PAGE_ACCESS_TOKEN }
