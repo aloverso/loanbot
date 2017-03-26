@@ -50,14 +50,17 @@ def posthook():
 
     return "ok", 200
 
-tools = ['screwdriver']
+tools = ['screwdriver', 'drill', 'arduino']
 checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'checked out']
 
 def determine_response(message):
     if any(word in message for word in checkout_words):
-        return "you're checking something out"
+        for tool in tools:
+            if tool in message:
+                return "Sounds like you want to check out a {}, is that correct?".format(tool)
+        return "What tool do you want to check out?"
     else:
-        "idk what you're sayin yo"
+        return "idk what you're sayin yo"
 
 def send_message(recipient_id, message_text):
     params = { "access_token": PAGE_ACCESS_TOKEN }
