@@ -51,14 +51,17 @@ def posthook():
     return "ok", 200
 
 tools = ['screwdriver', 'drill', 'arduino']
-checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'checked out']
+checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out']
 
 def determine_response_and_send(sender_id, message):
     if any(word in message for word in checkout_words):
+        found_tool = False
         for tool in tools:
             if tool in message:
+                found_tool = True
                 send_quickreply_message(sender_id, "Sounds like you want to check out a {}, is that correct?".format(tool))
-        send_message(sender_id, "What tool do you want to check out?")
+        if not found_tool:
+            send_message(sender_id, "What tool do you want to check out?")
     else:
         send_message(sender_id, "idk what you're sayin yo:" + message)
 
