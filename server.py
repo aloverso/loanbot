@@ -39,7 +39,7 @@ def posthook():
                     if 'text' in messaging_event["message"]:
                         message_text = messaging_event["message"]["text"]  # the message's text
 
-                        send_message(sender_id, message_text)
+                        send_message(sender_id, determine_response(message_text))
 
                     elif 'attachments' in messaging_event["message"]:
 
@@ -49,6 +49,15 @@ def posthook():
                         send_message(sender_id, "Sorry, I can't read that message format!")
 
     return "ok", 200
+
+tools = ['screwdriver']
+checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'checked out']
+
+def determine_response(message):
+    if any(word in message for word in checkout_words):
+        return "you're checking something out"
+    else:
+        "idk what you're sayin yo"
 
 def send_message(recipient_id, message_text):
     params = { "access_token": PAGE_ACCESS_TOKEN }
