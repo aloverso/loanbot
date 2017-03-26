@@ -36,6 +36,11 @@ def posthook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     
+                    if 'quick_reply' in messaging_event['message']:
+                        print(messaging_event["message"]["quick_reply"]["payload"])
+
+                    print(messaging_event["message"]["seq"])
+
                     if 'text' in messaging_event["message"]:
                         message_text = messaging_event["message"]["text"]  # the message's text
 
