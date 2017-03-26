@@ -3,11 +3,29 @@ import json
 import sys
 import requests
 from flask import Flask, redirect, render_template, request, url_for, Response
+from pymongo import MongoClient
 
 app = Flask(__name__)
 
 VALIDATION_TOKEN = os.environ['validationToken']
 PAGE_ACCESS_TOKEN = os.environ['pageAccessToken']
+MONGO_URI = os.environ['mongo_uri']
+
+client = MongoClient(MONGO_URI)
+db = client.olinloanbot
+users = db.users
+tools = db.tools
+
+class User:
+    def __init__(self, sender_id):
+        self.sender_id = sender_id
+        self.tools = []
+
+class Tool:
+    def __init__(self, name):
+        self.name = name
+        self.current_user = None
+        self.current_due_date = None
 
 @app.route('/')
 def home():
