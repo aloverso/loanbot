@@ -135,7 +135,7 @@ def determine_response_and_send(user, message):
             send_quickreply_message(user['sender_id'], "Great! Is a loan time of {} days okay?".format(time))
             user['stage'] = HOW_LONG
             return user
-        if message == 'no':
+        else:
             send_message(user['sender_id'], "Sorry I misunderstood.  What tool do you want to check out?")
             user['temp_tools'] = []
             user['stage'] = WANT_CHECKOUT
@@ -154,6 +154,9 @@ def determine_response_and_send(user, message):
 
         send_message(user['sender_id'], "You're all set!  I'll remind you to return the {} before it's due.".format(tool_string))
         return user
+
+    print('I GOT TO THE END, OH NO')
+    return user
 
     ## TODO: check for cancelling
 
