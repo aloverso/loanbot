@@ -115,11 +115,11 @@ def determine_response_and_send(user, message):
             return user
 
     if user['stage'] == WANT_CHECKOUT:
-        find_tools()
+        return find_tools(user, message)
 
     # we sent them a greeting and asked what tool
     if user['stage'] == SENT_GREETING:
-        find_tools()
+        return find_tools(user, message)
 
     if user['stage'] == CONFIRM_TOOL:
         if message == 'yes':
@@ -163,7 +163,7 @@ def determine_response_and_send(user, message):
     # else:
     #     send_quickreply_message(user['sender_id'], "Hi, I'm the loan bot, would you like to check out a tool?")
 
-def find_tools():
+def find_tools(user, message):
     found_tool = False
     # TODO: find more than one tool
     for tool in tools:
