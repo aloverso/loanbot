@@ -132,7 +132,7 @@ def determine_response_and_send(user, message):
             # for tool in temp_tools:
             #     user['tools'].append(tool)
             time = calculate_time_for_loan(user['temp_tools'])
-            send_quickreply_message(user['sender_id'], "Great! Is a loan time of {} days okay?".format(time))
+            send_howlong_quickreply_message(user['sender_id'], "Great! Is a loan time of {} days okay?".format(time))
             user['stage'] = HOW_LONG
             return user
         else:
