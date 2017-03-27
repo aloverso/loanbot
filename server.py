@@ -98,7 +98,8 @@ def make_or_find_user(sender_id):
 
 def determine_response_and_send(user, message):
 
-    print(user.stage)
+    print(user)
+    print(user['stage'])
 
     if any(word in message for word in checkout_words):
         found_tool = False
