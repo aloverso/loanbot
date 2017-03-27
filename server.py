@@ -145,7 +145,7 @@ def determine_response_and_send(user, message):
         tool_string = ''
         for tool in user['temp_tools']:
             user['tools'].append(tool)
-            tool_string = tool_string + " and " # allow for a list of tools
+            tool_string = tool_string + tool + " and " # allow for a list of tools
         # remove final and from string
         tool_string = tool_string[:-5]
         user['temp_tools'] = []
