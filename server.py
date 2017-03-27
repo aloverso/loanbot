@@ -151,24 +151,6 @@ def determine_response_and_send(user, message):
 
     ## TODO: check for cancelling
 
-    def find_tools():
-        found_tool = False
-        # TODO: find more than one tool
-        for tool in tools:
-            if tool in message:
-                found_tool = True
-                send_quickreply_message(user['sender_id'], "Sounds like you want to check out a {}, is that correct?".format(tool))
-                user['stage'] = CONFIRM_TOOL
-                user['temp_tools'].append(tool)
-                return user
-        if not found_tool:
-            send_message(user['sender_id'], "What tool do you want to check out?")
-            user['stage'] = WANT_CHECKOUT
-            return user
-
-    # what format for time (start: day)
-    def calculate_time_for_loan(temp_tools):
-        return 1
 
     # if any(word in message for word in checkout_words):
     #     found_tool = False
@@ -180,6 +162,25 @@ def determine_response_and_send(user, message):
     #         send_message(user['sender_id'], "What tool do you want to check out?")
     # else:
     #     send_quickreply_message(user['sender_id'], "Hi, I'm the loan bot, would you like to check out a tool?")
+
+def find_tools():
+    found_tool = False
+    # TODO: find more than one tool
+    for tool in tools:
+        if tool in message:
+            found_tool = True
+            send_quickreply_message(user['sender_id'], "Sounds like you want to check out a {}, is that correct?".format(tool))
+            user['stage'] = CONFIRM_TOOL
+            user['temp_tools'].append(tool)
+            return user
+    if not found_tool:
+        send_message(user['sender_id'], "What tool do you want to check out?")
+        user['stage'] = WANT_CHECKOUT
+        return user
+
+# what format for time (start: day)
+def calculate_time_for_loan(temp_tools):
+    return 1
 
 def send_howlong_quickreply_message(recipient_id, message_text):
     params = { "access_token": PAGE_ACCESS_TOKEN }
