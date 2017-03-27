@@ -200,7 +200,7 @@ def send_howlong_quickreply_message(recipient_id, message_text):
                     "content_type":"text",
                     "title":"12 hours instead",
                     "payload":"DEVELOPER_DEFINED_PAYLOAD_12_HOURS"
-                }
+                },
                 {
                     "content_type":"text",
                     "title":"3 days instead",
