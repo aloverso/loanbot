@@ -143,7 +143,7 @@ def determine_response_and_send(user, message):
 
     if user['stage'] == HOW_LONG:
         tool_string = ''
-        for tool in temp_tools:
+        for tool in user['temp_tools']:
             user['tools'].append(tool)
             tool_string = tool_string + " and " # allow for a list of tools
         # remove final and from string
