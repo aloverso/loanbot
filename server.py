@@ -76,6 +76,8 @@ def posthook():
                         user = make_or_find_user(sender_id)
 
                         updated_user = determine_response_and_send(user, message_text)
+                        print(updated_user)
+                        print(type(updated_user))
                         users.find_one_and_replace({"sender_id":sender_id}, updated_user)
 
                     elif 'attachments' in messaging_event["message"]:
