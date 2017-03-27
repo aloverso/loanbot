@@ -5,10 +5,11 @@
 
 Welcome to loanbot's documentation!
 ===================================
-	mission
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   mission
 
 
 
