@@ -142,15 +142,9 @@ def determine_response_and_send(user, message):
             return user
 
     if user['stage'] == HOW_LONG:
-        tool_string = ''
-        for tool in user['temp_tools']:
-            user['tools'].append(tool)
-            tool_string = tool_string + tool + " and " # allow for a list of tools
-        # remove final and from string
-        tool_string = tool_string[:-5]
-        user['temp_tools'] = []
+        tool_string = make_tool_string(user)
 
-        # TODO: update tool's due date with response
+        # TODO: update tools due date with response
 
         send_message(user['sender_id'], "You're all set!  I'll remind you to return the {} before it's due.".format(tool_string))
         user['stage'] = NO_CONTACT
@@ -173,16 +167,26 @@ def determine_response_and_send(user, message):
     # else:
     #     send_quickreply_message(user['sender_id'], "Hi, I'm the loan bot, would you like to check out a tool?")
 
+def make_tool_string(user):
+    tool_string = ''
+    for tool in user['temp_tools']:
+        user['tools'].append(tool)
+        tool_string = tool_string + tool + " and " # allow for a list of tools
+    # remove final and from string
+    tool_string = tool_string[:-5]
+    return tool_string
+
 def find_tools(user, message):
     found_tool = False
-    # TODO: find more than one tool
     for tool in tools:
         if tool in message:
             found_tool = True
-            send_quickreply_message(user['sender_id'], "Sounds like you want to check out a {}, is that correct?".format(tool))
-            user['stage'] = CONFIRM_TOOL
             user['temp_tools'].append(tool)
-            return user
+    if found_tool:
+        tool_string = make_tool_string(user)
+        send_quickreply_message(user['sender_id'], "Sounds like you want to check out a {}, is that correct?".format(tool_string))
+        user['stage'] = CONFIRM_TOOL
+        return user
     if not found_tool:
         send_message(user['sender_id'], "What tool do you want to check out?")
         user['stage'] = WANT_CHECKOUT
