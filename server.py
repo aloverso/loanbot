@@ -16,10 +16,20 @@ db = client.olinloanbot
 users = db.users
 tools = db.tools
 
+# stages of checkout process
+NO_CONTACT = 0
+GREETING = 1
+WANT_CHECKOUT = 2
+IDENTIFY_TOOL = 3
+CONFIRM_TOOL = 4
+HOW_LONG = 5
+CLOSING = 6
+
 class User:
     def __init__(self, sender_id):
         self.sender_id = sender_id
         self.tools = []
+        self.stage = NO_CONTACT
 
 class Tool:
     def __init__(self, name):
@@ -62,7 +72,9 @@ def posthook():
                     if 'text' in messaging_event["message"]:
                         message_text = messaging_event["message"]["text"]  # the message's text
 
-                        determine_response_and_send(sender_id, message_text)
+                        user = make_or_find_user(sender_id)
+
+                        determine_response_and_send(user, message_text)
 
                     elif 'attachments' in messaging_event["message"]:
 
@@ -74,19 +86,30 @@ def posthook():
     return "ok", 200
 
 tools = ['screwdriver', 'drill', 'arduino']
-checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out']
+checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed']
+greetings = ['hello', 'hi', 'hey', 'sup']
 
-def determine_response_and_send(sender_id, message):
+def make_or_find_user(sender_id):
+    user = users.find_one({"sender_id":sender_id})
+    if user == None:
+        user = User(sender_id)
+        users.insert_one(user.__dict__)
+    return user
+
+def determine_response_and_send(user, message):
+
+    print(user.stage)
+
     if any(word in message for word in checkout_words):
         found_tool = False
         for tool in tools:
             if tool in message:
                 found_tool = True
-                send_quickreply_message(sender_id, "Sounds like you want to check out a {}, is that correct?".format(tool))
+                send_quickreply_message(user.sender_id, "Sounds like you want to check out a {}, is that correct?".format(tool))
         if not found_tool:
-            send_message(sender_id, "What tool do you want to check out?")
+            send_message(user.sender_id, "What tool do you want to check out?")
     else:
-        send_message(sender_id, "idk what you're sayin yo:" + message)
+        send_quickreply_message(user.sender_id, "Hi, I'm the loan bot, would you like to check out a tool?")
 
 def send_quickreply_message(recipient_id, message_text):
     params = { "access_token": PAGE_ACCESS_TOKEN }
