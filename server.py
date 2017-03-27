@@ -117,11 +117,15 @@ def determine_response_and_send(user, message):
             return user
 
     if user['stage'] == WANT_CHECKOUT:
-        return find_tools(user, message)
+        u = find_tools(user, message)
+        print(u)
+        return u
 
     # we sent them a greeting and asked what tool
     if user['stage'] == SENT_GREETING:
-        return find_tools(user, message)
+        u = find_tools(user, message)
+        print(u)
+        return u
 
     if user['stage'] == CONFIRM_TOOL:
         if message == 'yes':
