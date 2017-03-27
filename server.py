@@ -106,11 +106,11 @@ def determine_response_and_send(user, message):
         for tool in tools:
             if tool in message:
                 found_tool = True
-                send_quickreply_message(user.sender_id, "Sounds like you want to check out a {}, is that correct?".format(tool))
+                send_quickreply_message(user['sender_id'], "Sounds like you want to check out a {}, is that correct?".format(tool))
         if not found_tool:
-            send_message(user.sender_id, "What tool do you want to check out?")
+            send_message(user['sender_id'], "What tool do you want to check out?")
     else:
-        send_quickreply_message(user.sender_id, "Hi, I'm the loan bot, would you like to check out a tool?")
+        send_quickreply_message(user['sender_id'], "Hi, I'm the loan bot, would you like to check out a tool?")
 
 def send_quickreply_message(recipient_id, message_text):
     params = { "access_token": PAGE_ACCESS_TOKEN }
