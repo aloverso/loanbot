@@ -32,11 +32,14 @@ class User:
         self.temp_tools = []
         self.stage = NO_CONTACT
 
-class Tool:
-    def __init__(self, name):
-        self.name = name
-        self.current_user = None
-        self.current_due_date = None
+# class Tool:
+#     def __init__(self, name):
+#         self.name = name
+#         self.current_user = None
+#         self.current_due_date = None
+
+checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed']
+greetings = ['hello', 'hi', 'hey', 'sup']
 
 @app.route('/')
 def home():
@@ -88,10 +91,6 @@ def posthook():
                         send_message(sender_id, "Sorry, I can't read that message format!")
 
     return "ok", 200
-
-tools = ['screwdriver', 'drill', 'arduino']
-checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed']
-greetings = ['hello', 'hi', 'hey', 'sup']
 
 def make_or_find_user(sender_id):
     user = users.find_one({"sender_id":sender_id})
@@ -160,15 +159,16 @@ def make_tool_string(user):
     tool_string = ''
     for tool in user['temp_tools']:
         user['tools'].append(tool)
-        tool_string = tool_string + tool + " and " # allow for a list of tools
+        tool_string = tool_string + tool['name'] + " and " # allow for a list of tools
     # remove final and from string
     tool_string = tool_string[:-5]
     return tool_string
 
 def find_tools(user, message):
     found_tool = False
-    for tool in tools:
-        if tool in message:
+    tools_list = tools.find({})
+    for tool in tools_list:
+        if tool['name'] in message:
             found_tool = True
             user['temp_tools'].append(tool)
     if found_tool:
