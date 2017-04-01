@@ -144,7 +144,7 @@ def determine_response_and_send(user, message):
         print('message:', message)
         tool_string = make_tool_string(user)
         for tool in user['temp_tools']:
-            tool['current_user'] = user
+            tool['current_user'] = user['_id']
             tool['current_due_date'] = message
             tools.find_one_and_replace({'_id':tool['_id']},tool)
 
