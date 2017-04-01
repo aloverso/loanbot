@@ -167,6 +167,7 @@ def make_tool_string(user):
 def find_tools(user, message):
     found_tool = False
     tools_list = tools.find({})
+    print('tools_list:',tools_list)
     for tool in tools_list:
         if tool['name'] in message:
             found_tool = True
