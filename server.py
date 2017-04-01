@@ -47,6 +47,9 @@ def home():
 
 @app.route('/webhook', methods=['GET'])
 def verify():
+    '''
+    Facebook (FB) validating that we are in control of the app. 
+    '''
     if request.args.get("hub.mode") == "subscribe" and request.args.get("hub.challenge"):
         if not request.args.get("hub.verify_token") == VALIDATION_TOKEN:
             return "Verification token mismatch", 403
@@ -56,23 +59,26 @@ def verify():
 
 @app.route('/webhook', methods=['POST'])
 def posthook():
-
+    '''
+    Runs when we receive a message from FB, includes the FB message 
+    data and metadata. The entry point to our other functions.
+    '''
+    #handles the request and gets us into the current message
     data = request.get_json()
 
     if data["object"] == "page":
         for entry in data["entry"]:
             for messaging_event in entry["messaging"]:
-
-                if messaging_event.get("message"):  # someone sent us a message
-
-                    sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
-                    recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
-                    
+                # someone sent us a message
+                if messaging_event.get("message"):  
+                    # the facebook ID of the person sending you the message
+                    sender_id = messaging_event["sender"]["id"]        
+                    # the recipient's ID, which should be your page's facebook ID
+                    recipient_id = messaging_event["recipient"]["id"]  
+                    #for testing, what we get when we receive a quick reply
                     if 'quick_reply' in messaging_event['message']:
                         print(messaging_event["message"]["quick_reply"]["payload"])
-
-                    print(messaging_event["message"]["seq"])
-
+                    #if the message is text, send it to be parsed and find/add/update the user in the db.
                     if 'text' in messaging_event["message"]:
                         message_text = messaging_event["message"]["text"].lower()  # the message's text
 
@@ -82,17 +88,20 @@ def posthook():
                         # print(updated_user)
                         # print(type(updated_user))
                         users.find_one_and_replace({"sender_id":sender_id}, updated_user)
-
+                    #we don't currently do anything with attachments
                     elif 'attachments' in messaging_event["message"]:
 
                         send_message(sender_id, "You sent an attachment")
-
+                    #anything else (?) we are sorry we can't read
                     else:
                         send_message(sender_id, "Sorry, I can't read that message format!")
 
     return "ok", 200
 
 def make_or_find_user(sender_id):
+    '''
+    Makes or finds the user in the db by FB sender ID, returns user
+    '''
     user = users.find_one({"sender_id":sender_id})
     if user == None:
         user = User(sender_id)
@@ -100,10 +109,12 @@ def make_or_find_user(sender_id):
     return user
 
 def determine_response_and_send(user, message):
-
+    '''
+    Uses the user's stage to parse the message and determine how to reply
+    '''
     # print(user)
     print(user['stage'])
-
+    #if the user is initiating contact
     if user['stage'] == NO_CONTACT:
         # check for checkout words
         if any(word in message for word in checkout_words):
@@ -114,7 +125,7 @@ def determine_response_and_send(user, message):
             send_message(user['sender_id'], "Hi there! I'm the loan bot, what tool would you like to check out?")
             user['stage'] = SENT_GREETING
             return user
-
+    #if the user wants to check out something
     if user['stage'] == WANT_CHECKOUT:
         u = find_tools(user, message)
         # print(u)
@@ -125,8 +136,9 @@ def determine_response_and_send(user, message):
         u = find_tools(user, message)
         # print(u)
         return u
-
+    #we check that we parsed the correct tool/s...
     if user['stage'] == CONFIRM_TOOL:
+        #...if so, we find out how long the loan will be
         if message == 'yes':
             # for tool in temp_tools:
             #     user['tools'].append(tool)
@@ -134,28 +146,24 @@ def determine_response_and_send(user, message):
             send_howlong_quickreply_message(user['sender_id'], "Great! Is a loan time of {} days okay?".format(time))
             user['stage'] = HOW_LONG
             return user
+        #...if not, we try again
         else:
             send_message(user['sender_id'], "Sorry I misunderstood.  What tool do you want to check out?")
             user['temp_tools'] = []
             user['stage'] = WANT_CHECKOUT
             return user
-
+    #update user and tool db based on the loan time
     if user['stage'] == HOW_LONG:
-        print('message:', message)
         tool_string = make_tool_string(user)
         for tool in user['temp_tools']:
             tool['current_user'] = user['_id']
             tool['current_due_date'] = message
             tools.find_one_and_replace({'_id':tool['_id']},tool)
-
-            # tools.find_one_and_update(
-            #     {'_id':tool['_id']},
-            #     {'$set':{'current_user': user}, '$set':{'current_due_date': 1}}
-            #     )
             user['tools'].append(tool['_id'])
 
-        # TODO: update tools due date with response
+        # TODO: how to handle loan time if they are checking out more than one tool
 
+        #finish the interaction and reset the conversation stage
         send_message(user['sender_id'], "You're all set!  I'll remind you to return the {} before it's due.".format(tool_string))
         user['temp_tools'] = []
         user['stage'] = NO_CONTACT
@@ -167,6 +175,9 @@ def determine_response_and_send(user, message):
     ## TODO: check for cancelling
 
 def make_tool_string(user):
+    '''
+    creates a string of all tools a user is attempting to check out
+    '''
     tool_string = ''
     for tool in user['temp_tools']:
         tool_string = tool_string + tool['name'] + " and " # allow for a list of tools
@@ -175,20 +186,23 @@ def make_tool_string(user):
     return tool_string
 
 def find_tools(user, message):
+    '''
+    parses a message for a tool/s to be checked out 
+    '''
     found_tool = False
     tools_list = tools.find({})
-    print('tools_list:',tools_list)
+    #loop through list looking for tool names in message
     for tool in tools_list:
-        print('tool:', tool)
-        print('tool[name]:', tool['name'])
         if tool['name'] in message:
             found_tool = True
             user['temp_tools'].append(tool)
+    #if we found a tool name/s in the message
     if found_tool:
         tool_string = make_tool_string(user)
         send_quickreply_message(user['sender_id'], "Sounds like you want to check out a {}, is that correct?".format(tool_string))
         user['stage'] = CONFIRM_TOOL
         return user
+    #if we could not identify a tool name/s in the message
     if not found_tool:
         send_message(user['sender_id'], "What tool do you want to check out?")
         user['stage'] = WANT_CHECKOUT
@@ -199,6 +213,10 @@ def calculate_time_for_loan(temp_tools):
     return 1
 
 def send_howlong_quickreply_message(recipient_id, message_text):
+    '''
+    sends a FB quick reply message with options for loan time. 
+    the options are yes (1 day), 12 hours instead, 3 days instead
+    '''
     params = { "access_token": PAGE_ACCESS_TOKEN }
     headers = { "Content-Type": "application/json" }
     data = json.dumps({
@@ -231,6 +249,9 @@ def send_howlong_quickreply_message(recipient_id, message_text):
         print(r.status_code, r.text)
 
 def send_quickreply_message(recipient_id, message_text):
+    '''
+    sends a FB quick reply message with yes/no options
+    '''
     params = { "access_token": PAGE_ACCESS_TOKEN }
     headers = { "Content-Type": "application/json" }
     data = json.dumps({
@@ -258,6 +279,9 @@ def send_quickreply_message(recipient_id, message_text):
         print(r.status_code, r.text)
 
 def send_message(recipient_id, message_text):
+    '''
+    sends a custom FB message with message_text as the body
+    '''
     params = { "access_token": PAGE_ACCESS_TOKEN }
     headers = { "Content-Type": "application/json" }
     data = json.dumps({
