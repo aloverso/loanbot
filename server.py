@@ -145,7 +145,7 @@ def determine_response_and_send(user, message):
         for tool in user['temp_tools']:
             tools.find_one_and_update(
                 {'_id':tool['_id']},
-                {'$set':{'current_user': user},{'current_due_date': 1}}
+                {'$set':{'current_user': user}, '$set':{'current_due_date': 1}}
                 )
         # TODO: update tools due date with response
 
