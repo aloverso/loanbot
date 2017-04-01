@@ -11,7 +11,10 @@ Welcome to loanbot's documentation!
 
    mission
 
+.. automodule:: server
+   :members:
 
+.. autofunction:: server.determine_response_and_send()
 
 Indices and tables
 ==================

@@ -147,6 +147,7 @@ def determine_response_and_send(user, message):
         # TODO: update tools due date with response
 
         send_message(user['sender_id'], "You're all set!  I'll remind you to return the {} before it's due.".format(tool_string))
+        user['temp_tools'] = []
         user['stage'] = NO_CONTACT
         return user
 

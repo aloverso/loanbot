@@ -1,0 +1,6 @@
+We are working on a chatbot that facillitates a library patron checking out and using non-book, non-digital resource loan items (in the current iteration, tools from the Olin library). In order to do this and actually connect with the loan system, we will need to access (read from and make changes to) the following things in the TIND catalog system:
+
+the list of resources to be loaned
+user checkout information
+resource checkout information
+reminders to return
