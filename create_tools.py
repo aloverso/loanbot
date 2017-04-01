@@ -18,3 +18,4 @@ tools_list = [Tool('screwdriver'), Tool('drill'), Tool('arduino')]
 def create_tools(tools_list):
 	for tool in tools_list:
 		tools.insert_one(tool.__dict__)
+create_tools(tools_list)
