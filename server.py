@@ -169,6 +169,8 @@ def find_tools(user, message):
     tools_list = tools.find({})
     print('tools_list:',tools_list)
     for tool in tools_list:
+        print('tool:', tool)
+        print('tool[name]:', tool['name'])
         if tool['name'] in message:
             found_tool = True
             user['temp_tools'].append(tool)
