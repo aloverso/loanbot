@@ -79,8 +79,8 @@ def posthook():
                         user = make_or_find_user(sender_id)
 
                         updated_user = determine_response_and_send(user, message_text)
-                        print(updated_user)
-                        print(type(updated_user))
+                        # print(updated_user)
+                        # print(type(updated_user))
                         users.find_one_and_replace({"sender_id":sender_id}, updated_user)
 
                     elif 'attachments' in messaging_event["message"]:
@@ -101,7 +101,7 @@ def make_or_find_user(sender_id):
 
 def determine_response_and_send(user, message):
 
-    print(user)
+    # print(user)
     print(user['stage'])
 
     if user['stage'] == NO_CONTACT:
@@ -117,13 +117,13 @@ def determine_response_and_send(user, message):
 
     if user['stage'] == WANT_CHECKOUT:
         u = find_tools(user, message)
-        print(u)
+        # print(u)
         return u
 
     # we sent them a greeting and asked what tool
     if user['stage'] == SENT_GREETING:
         u = find_tools(user, message)
-        print(u)
+        # print(u)
         return u
 
     if user['stage'] == CONFIRM_TOOL:
