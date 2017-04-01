@@ -141,12 +141,19 @@ def determine_response_and_send(user, message):
             return user
 
     if user['stage'] == HOW_LONG:
+        print('message:', message)
         tool_string = make_tool_string(user)
         for tool in user['temp_tools']:
-            tools.find_one_and_update(
-                {'_id':tool['_id']},
-                {'$set':{'current_user': user}, '$set':{'current_due_date': 1}}
-                )
+            tool['current_user'] = user
+            tool['current_due_date'] = message
+            tools.find_one_and_replace({'_id':tool['_id']},tool)
+
+            # tools.find_one_and_update(
+            #     {'_id':tool['_id']},
+            #     {'$set':{'current_user': user}, '$set':{'current_due_date': 1}}
+            #     )
+            user['tools'].append(tool)
+
         # TODO: update tools due date with response
 
         send_message(user['sender_id'], "You're all set!  I'll remind you to return the {} before it's due.".format(tool_string))
@@ -162,7 +169,6 @@ def determine_response_and_send(user, message):
 def make_tool_string(user):
     tool_string = ''
     for tool in user['temp_tools']:
-        user['tools'].append(tool)
         tool_string = tool_string + tool['name'] + " and " # allow for a list of tools
     # remove final and from string
     tool_string = tool_string[:-5]
