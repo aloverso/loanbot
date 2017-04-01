@@ -152,7 +152,7 @@ def determine_response_and_send(user, message):
             #     {'_id':tool['_id']},
             #     {'$set':{'current_user': user}, '$set':{'current_due_date': 1}}
             #     )
-            user['tools'].append(tool)
+            user['tools'].append(tool['_id'])
 
         # TODO: update tools due date with response
 
