@@ -71,7 +71,7 @@ def posthook():
                     print(messaging_event["message"]["seq"])
 
                     if 'text' in messaging_event["message"]:
-                        message_text = messaging_event["message"]["text"]  # the message's text
+                        message_text = messaging_event["message"]["text"].lower()  # the message's text
 
                         user = make_or_find_user(sender_id)
 
@@ -154,18 +154,6 @@ def determine_response_and_send(user, message):
     return user
 
     ## TODO: check for cancelling
-
-
-    # if any(word in message for word in checkout_words):
-    #     found_tool = False
-    #     for tool in tools:
-    #         if tool in message:
-    #             found_tool = True
-    #             send_quickreply_message(user['sender_id'], "Sounds like you want to check out a {}, is that correct?".format(tool))
-    #     if not found_tool:
-    #         send_message(user['sender_id'], "What tool do you want to check out?")
-    # else:
-    #     send_quickreply_message(user['sender_id'], "Hi, I'm the loan bot, would you like to check out a tool?")
 
 def make_tool_string(user):
     tool_string = ''
