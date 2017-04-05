@@ -108,7 +108,9 @@ def set_interval(func, sec):
     creates a timer that runs a function (func) after every sec seconds. uses import threading
     '''
     def func_wrapper():
+        print('delving into func_wrapper')
         set_interval(func, sec)
+        print('func_wrapper after set_interval')
         func()
     t=threading.Timer(sec, func_wrapper)
     t.start()
