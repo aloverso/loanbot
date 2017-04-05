@@ -113,7 +113,6 @@ def set_interval(func, sec):
     t=threading.Timer(sec, func_wrapper)
     t.start()
     return t
-set_interval(check_if_due_and_remind, INTERVAL_TIME)
 
 def check_if_due_and_remind():
     '''
@@ -128,6 +127,8 @@ def check_if_due_and_remind():
             user_to_remind = users.find_one({'_id':tool['current_user']})
             send_message(user_to_remind['sender_id'], reminder_message)
 #TODO: let them say they have returned it, so it stops reminding them
+
+set_interval(check_if_due_and_remind, INTERVAL_TIME)
 
 def make_or_find_user(sender_id):
     '''
