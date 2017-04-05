@@ -4,6 +4,8 @@ import sys
 import requests
 from flask import Flask, redirect, render_template, request, url_for, Response
 from pymongo import MongoClient
+import time
+import threading
 
 app = Flask(__name__)
 
@@ -24,6 +26,9 @@ WANT_CHECKOUT = 2
 CONFIRM_TOOL = 4
 HOW_LONG = 5
 CLOSING = 6
+
+REMINDER_TIME = 60 # should be 2 hours
+INTERVAL_TIME = 30 # should be 1 hour
 
 class User:
     def __init__(self, sender_id):
@@ -98,11 +103,37 @@ def posthook():
 
     return "ok", 200
 
+def set_interval(func, sec):
+    '''
+    creates a timer that runs a function (func) after every sec seconds. uses import threading
+    '''
+    def func_wrapper():
+        set_interval(func, sec)
+        func()
+    t=threading.Timer(sec, func_wrapper)
+    t.start()
+    return t
+set_interval(check_if_due_and_remind, INTERVAL_TIME)
+
+def check_if_due_and_remind():
+    '''
+    loops through the tools to determine whether they are due 
+    in the next two hours, and sends the reminder to the user. uses import time
+    '''
+    current_time = int(time.time())
+    tools_list = tools.find({})
+    for tool in tools_list:
+        if tool['current_due_date']-current_time<=(REMINDER_TIME):
+            reminder_message = 'Hi! The {} is due very soon, could you bring it back to the library please?'.format(tool['name'])
+            user_to_remind = users.find_one({'_id':tool['current_user']})
+            send_message(user_to_remind['sender_id'], reminder_message)
+#TODO: let them say they have returned it, so it stops reminding them
+
 def make_or_find_user(sender_id):
     '''
     Makes or finds the user in the db by FB sender ID, returns user
     '''
-    user = users.find_one({"sender_id":sender_id})
+    user = users.find_one({'sender_id':sender_id})
     if user == None:
         user = User(sender_id)
         users.insert_one(user.__dict__)
@@ -157,7 +188,7 @@ def determine_response_and_send(user, message):
         tool_string = make_tool_string(user)
         for tool in user['temp_tools']:
             tool['current_user'] = user['_id']
-            tool['current_due_date'] = message
+            tool['current_due_date'] = parse_due_date(message)
             tools.find_one_and_replace({'_id':tool['_id']},tool)
             user['tools'].append(tool['_id'])
 
@@ -173,6 +204,25 @@ def determine_response_and_send(user, message):
     return user
 
     ## TODO: check for cancelling
+def parse_due_date(message):
+    '''
+    Parses the loan time quick reply message to store a due_date 
+    for the tool/s the user wants to check out. uses import time
+    '''
+    due_date = 0
+    SECONDS_IN_DAY = 3600*24
+
+    # they want a 24 hour loan
+    if message == 'yes':
+        due_date = int(time.time()) + 120 # !!!!!! CHANGE THIS BACK TO SECONDS_IN_DAY!!!!!!
+    # they want a 12 hour loan
+    elif message == '12 hours instead':
+        due_date = int(time.time()) + (SECONDS_IN_DAY/2)
+    #they want a 3 day loan
+    elif message == '3 days instead':
+        due_date = int(time.time()) + (SECONDS_IN_DAY*3)
+    return due_date
+
 
 def make_tool_string(user):
     '''
