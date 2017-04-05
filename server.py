@@ -122,10 +122,11 @@ def check_if_due_and_remind():
     current_time = int(time.time())
     tools_list = tools.find({})
     for tool in tools_list:
-        if int(tool['current_due_date'])-current_time<=(REMINDER_TIME):
-            reminder_message = 'Hi! The {} is due very soon, could you bring it back to the library please?'.format(tool['name'])
-            user_to_remind = users.find_one({'_id':tool['current_user']})
-            send_message(user_to_remind['sender_id'], reminder_message)
+        if tool['current_due_date']:
+            if int(tool['current_due_date'])-current_time<=(REMINDER_TIME):
+                reminder_message = 'Hi! The {} is due very soon, could you bring it back to the library please?'.format(tool['name'])
+                user_to_remind = users.find_one({'_id':tool['current_user']})
+                send_message(user_to_remind['sender_id'], reminder_message)
 #TODO: let them say they have returned it, so it stops reminding them
 
 set_interval(check_if_due_and_remind, INTERVAL_TIME)
