@@ -27,6 +27,7 @@ CONFIRM_TOOL = 4
 HOW_LONG = 5
 CLOSING = 6
 
+
 REMINDER_TIME = 60 # should be 2 hours
 INTERVAL_TIME = 30 # should be 1 hour
 
@@ -45,7 +46,7 @@ class User:
 
 checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed']
 greetings = ['hello', 'hi', 'hey', 'sup']
-
+return_words = ['return', 'returned','returning','brought', 'bring', 'bringing', 'dropping', 'dropped', 'took back', 'left', 'done', 'done with', 'finished']
 @app.route('/')
 def home():
     return 'ok'
@@ -156,15 +157,18 @@ def determine_response_and_send(user, message):
     print(user['stage'])
     #if the user is initiating contact
     if user['stage'] == NO_CONTACT:
+
         # check for checkout words
         if any(word in message for word in checkout_words):
             # id as checkout request
             user['stage'] = WANT_CHECKOUT
+
         else:
             # send greeting and ask what tool
             send_message(user['sender_id'], "Hi there! I'm the loan bot, what tool would you like to check out?")
             user['stage'] = SENT_GREETING
             return user
+
     #if the user wants to check out something
     if user['stage'] == WANT_CHECKOUT:
         u = find_tools(user, message)
@@ -173,11 +177,14 @@ def determine_response_and_send(user, message):
 
     # we sent them a greeting and asked what tool
     if user['stage'] == SENT_GREETING:
+        #for now, passing in checking out use case. can be adapted to other use cases in the future.
         u = find_tools(user, message)
         # print(u)
         return u
+
     #we check that we parsed the correct tool/s...
     if user['stage'] == CONFIRM_TOOL:
+
         #...if so, we find out how long the loan will be
         if message == 'yes':
             # for tool in temp_tools:
@@ -186,12 +193,14 @@ def determine_response_and_send(user, message):
             send_howlong_quickreply_message(user['sender_id'], "Great! Is a loan time of {} days okay?".format(time))
             user['stage'] = HOW_LONG
             return user
+
         #...if not, we try again
         else:
             send_message(user['sender_id'], "Sorry I misunderstood.  What tool do you want to check out?")
             user['temp_tools'] = []
             user['stage'] = WANT_CHECKOUT
             return user
+
     #update user and tool db based on the loan time
     if user['stage'] == HOW_LONG:
         tool_string = make_tool_string(user)
@@ -208,6 +217,13 @@ def determine_response_and_send(user, message):
         user['temp_tools'] = []
         user['stage'] = NO_CONTACT
         return user
+
+    #check if the user is trying to say they have returned a tool
+    if any(word in message for word in return_words):
+        tools_checked_out_by_user = []
+        for tool_id in user['tools']:
+            tools_checked_out_by_user.append(tools.find_one({'_id':tool_id})['name'])
+
 
     print('I GOT TO THE END, OH NO')
     return user
@@ -246,26 +262,30 @@ def make_tool_string(user):
 
 def find_tools(user, message):
     '''
-    parses a message for a tool/s to be checked out 
+    parses a message for tool/s to be checked out 
     '''
     found_tool = False
     tools_list = tools.find({})
+
     #loop through list looking for tool names in message
     for tool in tools_list:
         if tool['name'] in message:
             found_tool = True
             user['temp_tools'].append(tool)
+
     #if we found a tool name/s in the message
     if found_tool:
         tool_string = make_tool_string(user)
         send_quickreply_message(user['sender_id'], "Sounds like you want to check out a {}, is that correct?".format(tool_string))
         user['stage'] = CONFIRM_TOOL
         return user
+
     #if we could not identify a tool name/s in the message
     if not found_tool:
         send_message(user['sender_id'], "What tool do you want to check out?")
         user['stage'] = WANT_CHECKOUT
         return user
+
 
 # what format for time (start: day)
 def calculate_time_for_loan(temp_tools):
