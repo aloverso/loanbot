@@ -1,5 +1,8 @@
 import os
 
+'''
+A class that interfaces with facebook Messenger and receives and sends message data
+'''
 class MessengerClient:
 
     def __init__(self):
@@ -7,7 +10,7 @@ class MessengerClient:
 
     '''
     handles data received from the webhook
-    extracts the message text and sends it to ___ for parsing
+    extracts the message text and sender_id and returns
     '''
     def handle_received_data(self, data):
         if data["object"] == "page":

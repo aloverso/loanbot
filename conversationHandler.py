@@ -1,6 +1,12 @@
 import time
 
+'''
+A class that deals with the messages we receive from users
+'''
 class ConversationHandler():
+    '''
+    create a new conversation handler with a given database client
+    '''
     def __init__(self, database_client):
         self.database_client = database_client
         

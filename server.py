@@ -1,40 +1,15 @@
 import os
-# import json
-# import sys
 import requests
 from flask import Flask, redirect, render_template, request, url_for, Response
-# from pymongo import MongoClient
-# import time
-# import threading
 from apscheduler.schedulers.background import BackgroundScheduler
 
 import messengerClient
 import conversationHandler
 import databaseClient
 
-# from messengerClient import MessengerClient
-# from conversationHandler import ConversationHandler
-# from databaseClient import DatabaseClient
-
 app = Flask(__name__)
 
 VALIDATION_TOKEN = os.environ['validationToken']
-# PAGE_ACCESS_TOKEN = os.environ['pageAccessToken']
-# MONGO_URI = os.environ['mongo_uri']
-
-# client = MongoClient(MONGO_URI)
-# db = client.olinloanbot
-# users = db.users
-# tools = db.tools
-
-# # stages of checkout process
-# NO_CONTACT = 0
-# SENT_GREETING = 1
-# WANT_CHECKOUT = 2
-# #IDENTIFY_TOOL = 3
-# CONFIRM_TOOL = 4
-# HOW_LONG = 5
-# CLOSING = 6
 
 REMINDER_TIME = 60 # should be 2 hours
 INTERVAL_TIME = 30 # should be 1 hour
@@ -43,9 +18,6 @@ INTERVAL_TIME = 30 # should be 1 hour
 messenger_client = messengerClient.MessengerClient()
 database_client = databaseClient.DatabaseClient()
 conversation_handler = conversationHandler.ConversationHandler(database_client)
-
-# checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed']
-# greetings = ['hello', 'hi', 'hey', 'sup']
 
 @app.route('/')
 def home():
@@ -82,27 +54,6 @@ def posthook():
 
     return "ok", 200
 
-# def set_interval(func, sec):
-#     '''
-#     creates a timer that runs a function (func) after every sec seconds. uses import threading
-#     FOR SOME REASON THIS IS RUNNING DOUBLE, BUT ONLY HERE, NOT IN TESTING
-#     '''
-#     def func_wrapper():
-#         print('delving into func_wrapper')
-#         set_interval(func, sec)
-#         print('func_wrapper after set_interval')
-#         func()
-#     t=threading.Timer(sec, func_wrapper)
-#     t.start()
-#     return t
-
-# def some_job():
-#     print("successfully finished job!")
-
-# apsched = BackgroundScheduler()
-# apsched.start()
-# apsched.add_job(my_job, 'interval', seconds=10)
-
 def check_if_due_and_remind():
     '''
     loops through the tools to determine whether they are due 
@@ -122,7 +73,12 @@ def check_if_due_and_remind():
     #             print('sent reminder message for {}'.format(tool['_id']))
 #TODO: let them say they have returned it, so it stops reminding them
 
-# set_interval(check_if_due_and_remind, INTERVAL_TIME)
+# def some_job():
+#     print("successfully finished job!")
+
+# apsched = BackgroundScheduler()
+# apsched.start()
+# apsched.add_job(some_job, 'interval', seconds=10)
 
 if __name__ == '__main__':
     app.run(debug=True, port=int(os.environ.get("PORT", 5000)), host=os.environ.get("HOST", '127.0.0.1'))
