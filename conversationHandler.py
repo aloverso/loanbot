@@ -36,11 +36,12 @@ class ConversationHandler():
     '''
     def make_tool_string(self, user):
         tool_string = ''
+        print('temp_tools', user['temp_tools'])
         for tool in user['temp_tools']:
             tool_string = tool_string + tool['name'] + " and " # allow for a list of tools
         # remove final and from string
         tool_string = tool_string[:-5]
-        print(tool_string)
+        print('tool string:', tool_string)
         return tool_string
 
     '''
@@ -77,6 +78,7 @@ class ConversationHandler():
         or a list of quickreply options
     '''
     def determine_response_for_user(self, message, user):
+        print('determine_response_for_user')
         #if the user is initiating contact
         if user['stage'] == self.NO_CONTACT:
             # check for checkout words
@@ -96,6 +98,7 @@ class ConversationHandler():
             #if we found a tool name/s in the message
             if len(tools_wanted) > 0:
                 tool_string = self.make_tool_string(user)
+                print('tool string in line:', tool_string)
                 response = "Sounds like you want to check out a {}, is that correct?".format(tool_string)
                 user['stage'] = self.CONFIRM_TOOL
                 return user, response, ['yes','no']

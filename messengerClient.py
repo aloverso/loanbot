@@ -15,6 +15,7 @@ class MessengerClient:
     extracts the message text and sender_id and returns
     '''
     def handle_received_data(self, data):
+        print('handing received data')
         if data["object"] == "page":
             for entry in data["entry"]:
                 for messaging_event in entry["messaging"]:
@@ -38,6 +39,8 @@ class MessengerClient:
     '''
     def send_message(self, recipient_id, message_text, quickreply_options_list):
         quickreply_options = []
+
+        print('sending message')
 
         if quickreply_options_list:
             for option in quickreply_options_list:
