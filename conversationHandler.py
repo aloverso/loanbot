@@ -40,6 +40,7 @@ class ConversationHandler():
             tool_string = tool_string + tool['name'] + " and " # allow for a list of tools
         # remove final and from string
         tool_string = tool_string[:-5]
+        print(tool_string)
         return tool_string
 
     '''
