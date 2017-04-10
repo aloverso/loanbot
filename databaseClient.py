@@ -55,6 +55,7 @@ class DatabaseClient():
 	    if user == None:
 	        user = User(sender_id)
 	        self.users.insert_one(user.__dict__)
+	    user = self.users.find_one({'sender_id':sender_id})
 	    return user
 
 	'''
