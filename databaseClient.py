@@ -9,7 +9,7 @@ class User:
         self.sender_id = sender_id
         self.tools = []
         self.temp_tools = []
-        self.stage = NO_CONTACT
+        self.stage = 0
 
 '''
 A client which connects to Mongo and deals with Mongo database operations
