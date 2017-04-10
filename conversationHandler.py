@@ -24,7 +24,7 @@ class ConversationHandler():
     '''
     def find_tool_names_in_message(self, message):
         found_tools = []
-        tools_list = database_client.get_all_tools()
+        tools_list = self.database_client.get_all_tools()
         #loop through list looking for tool names in message
         for tool in tools_list:
             if tool['name'] in message:
@@ -124,7 +124,7 @@ class ConversationHandler():
             for tool in user['temp_tools']:
                 tool['current_user'] = user['_id']
                 tool['current_due_date'] = self.parse_due_date(message)
-                database_client.update_tool(tool)
+                self.database_client.update_tool(tool)
                 user['tools'].append(tool['_id'])
 
             # TODO: how to handle loan time if they are checking out more than one tool
