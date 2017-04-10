@@ -9,6 +9,7 @@ class ConversationHandler():
     '''
     def __init__(self, database_client):
         self.database_client = database_client
+        self.checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed']
         
         self.NO_CONTACT = 0
         self.SENT_GREETING = 1
@@ -78,7 +79,7 @@ class ConversationHandler():
         #if the user is initiating contact
         if user['stage'] == self.NO_CONTACT:
             # check for checkout words
-            if any(word in message for word in checkout_words):
+            if any(word in message for word in self.checkout_words):
                 # id as checkout request
                 user['stage'] = self.WANT_CHECKOUT
             else:
