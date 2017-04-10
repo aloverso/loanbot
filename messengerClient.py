@@ -1,4 +1,5 @@
 import os
+import json
 
 '''
 A class that interfaces with facebook Messenger and receives and sends message data
