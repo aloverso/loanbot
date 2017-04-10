@@ -44,7 +44,7 @@ def posthook():
     data = request.get_json()
 
     message_text, sender_id = messenger_client.handle_received_data(data)
-    user = database_client.find_user_by_sender_id(sender_id)
+    user = database_client.find_or_create_user(sender_id)
     
     updated_user, response, quickreply = conversation_handler.determine_response_for_user(message_text, user)
     database_client.update_user(updated_user)
