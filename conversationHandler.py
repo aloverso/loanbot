@@ -94,7 +94,7 @@ class ConversationHandler():
             
             #if we found a tool name/s in the message
             if len(tools_wanted) > 0:
-                tool_string = make_tool_string(user)
+                tool_string = self.make_tool_string(user)
                 response = "Sounds like you want to check out a {}, is that correct?".format(tool_string)
                 user['stage'] = CONFIRM_TOOL
                 return user, response, ['yes','no']
@@ -120,7 +120,7 @@ class ConversationHandler():
 
         #update user and tool db based on the loan time
         if user['stage'] == self.HOW_LONG:
-            tool_string = make_tool_string(user)
+            tool_string = self.make_tool_string(user)
             for tool in user['temp_tools']:
                 tool['current_user'] = user['_id']
                 tool['current_due_date'] = self.parse_due_date(message)
