@@ -20,7 +20,7 @@ class DatabaseClient():
 		client = MongoClient(MONGO_URI)
 		db = client.olinloanbot
 		self.users = db.users
-		self.tools = db.tool
+		self.tools = db.tools
 
 	'''
 	returns all users in the Users database
