@@ -96,7 +96,7 @@ class ConversationHandler():
             if len(tools_wanted) > 0:
                 tool_string = self.make_tool_string(user)
                 response = "Sounds like you want to check out a {}, is that correct?".format(tool_string)
-                user['stage'] = CONFIRM_TOOL
+                user['stage'] = self.CONFIRM_TOOL
                 return user, response, ['yes','no']
             
             #if we could not identify a tool name/s in the message
