@@ -94,6 +94,7 @@ class ConversationHandler():
         #if the user wants to check out something
         if user['stage'] == self.WANT_CHECKOUT or user['stage'] == self.SENT_GREETING:
             tools_wanted = self.find_tool_names_in_message(message)
+            user['temp_tools'] = tools_wanted
             
             #if we found a tool name/s in the message
             if len(tools_wanted) > 0:
