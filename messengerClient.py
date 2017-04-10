@@ -37,12 +37,13 @@ class MessengerClient:
     def send_message(self, recipient_id, message_text, quickreply_options_list):
         quickreply_options = []
 
-        for option in quickreply_options_list:
-            quickreply_options.append({
-                        "content_type":"text",
-                        "title":option,
-                        "payload":"DEVELOPER_DEFINED_PAYLOAD"
-                    })
+        if quickreply_options_list:
+            for option in quickreply_options_list:
+                quickreply_options.append({
+                            "content_type":"text",
+                            "title":option,
+                            "payload":"DEVELOPER_DEFINED_PAYLOAD"
+                        })
 
         params = { "access_token": self.PAGE_ACCESS_TOKEN }
         headers = { "Content-Type": "application/json" }
