@@ -50,20 +50,20 @@ class MessengerClient:
                             "payload":"DEVELOPER_DEFINED_PAYLOAD"
                         })
 
-                params = { "access_token": self.PAGE_ACCESS_TOKEN }
-                headers = { "Content-Type": "application/json" }
-                data = json.dumps({
-                    "recipient": {
-                        "id": recipient_id
-                    },
-                    "message": {
-                        "text": message_text,
-                        "quick_replies": quickreply_options
-                    }
-                })
-                r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-                if r.status_code != 200:
-                    print(r.status_code, r.text)
+            params = { "access_token": self.PAGE_ACCESS_TOKEN }
+            headers = { "Content-Type": "application/json" }
+            data = json.dumps({
+                "recipient": {
+                    "id": recipient_id
+                },
+                "message": {
+                    "text": message_text,
+                    "quick_replies": quickreply_options
+                }
+            })
+            r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+            if r.status_code != 200:
+                print(r.status_code, r.text)
         else:
             params = { "access_token": self.PAGE_ACCESS_TOKEN }
             headers = { "Content-Type": "application/json" }
