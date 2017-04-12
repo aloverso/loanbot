@@ -110,8 +110,8 @@ class ConversationHandler():
             
             #if we could not identify a tool name/s in the message
             else:
-                user['stage'] = self.WANT_CHECKOUT
-                return user, "What tool do you want to check out?", None
+                user['stage'] = self.NO_CONTACT
+                return user, "What can I help you with?", None
 
         #we check that we parsed the correct tool/s...
         if user['stage'] == self.CONFIRM_TOOL:
@@ -124,8 +124,8 @@ class ConversationHandler():
             #...if not, we try again
             else:
                 user['temp_tools'] = []
-                user['stage'] = self.WANT_CHECKOUT
-                return user, "Sorry I misunderstood.  What tool do you want to check out?", None
+                user['stage'] = self.NO_CONTACT
+                return user, "Sorry I misunderstood.  What do you want to do?", None
 
         #update user and tool db based on the loan time
         if user['stage'] == self.HOW_LONG:
