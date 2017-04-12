@@ -17,6 +17,8 @@ class ConversationHandler():
         self.CONFIRM_TOOL = 4
         self.HOW_LONG = 5
         self.CLOSING = 6
+        self.WANT_RETURN = 7
+        self.CONFIRM_TOOL_RETURN = 8
     
     '''
     searches through a message looking for names of tools from the tools database
