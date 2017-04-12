@@ -9,8 +9,10 @@ class ConversationHandler():
     '''
     def __init__(self, database_client):
         self.database_client = database_client
-        self.checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed']
+        self.checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed', 'want']
         self.return_words = ['return', 'returned','returning','brought', 'bring', 'bringing', 'dropping', 'dropped', 'took back', 'left', 'done', 'done with', 'finished']
+        self.closing_words = ['thanks', 'thank', 'ok', 'bye']
+
         self.NO_CONTACT = 0
         self.SENT_GREETING = 1
         self.WANT_CHECKOUT = 2
@@ -81,6 +83,12 @@ class ConversationHandler():
     '''
     def determine_response_for_user(self, message, user):
         print('determine_response_for_user')
+        
+        if any(word in message for word in self.closing_words):
+                response = "Glad to help. Bye!"
+                user['stage'] = self.NO_CONTACT
+                return user, response, None
+
         #if the user is initiating contact
         if user['stage'] == self.NO_CONTACT:
             # check for checkout words
