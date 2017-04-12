@@ -160,9 +160,9 @@ class ConversationHandler():
                     self.database_client.update_tool(tool)
 
                     # update user tool list
-                    for checked_out_tool in user['tools']:
-                        if checked_out_tool['_id'] == tool['_id']:
-                            user['tools'].remove(checked_out_tool)
+                    for checked_out_tool_id in user['tools']:
+                        if checked_out_tool_id == tool['_id']:
+                            user['tools'].remove(checked_out_tool_id)
 
                 user['temp_tools'] = []
                 user['stage'] = NO_CONTACT
