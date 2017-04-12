@@ -58,9 +58,7 @@ def posthook():
 
     return "ok", 200
 
-sched = BlockingScheduler()
-
-@sched.scheduled_job('interval', seconds=INTERVAL_TIME)
+# @sched.scheduled_job('interval', seconds=INTERVAL_TIME)
 def check_if_due_and_remind():
     '''
     loops through the tools to determine whether they are due 
@@ -86,9 +84,9 @@ def check_if_due_and_remind():
 # def timed_job():
 #     print('This job is run every three minutes.')
 
-# apsched = BackgroundScheduler()
-# apsched.start()
-# apsched.add_job(check_if_due_and_remind, 'interval', seconds=INTERVAL_TIME)
+apsched = BlockingScheduler()
+apsched.start()
+apsched.add_job(check_if_due_and_remind, 'interval', seconds=INTERVAL_TIME)
 
 if __name__ == '__main__':
     app.run(debug=True, port=int(os.environ.get("PORT", 5000)), host=os.environ.get("HOST", '127.0.0.1'))
