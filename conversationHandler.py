@@ -165,7 +165,7 @@ class ConversationHandler():
                             user['tools'].remove(checked_out_tool_id)
 
                 user['temp_tools'] = []
-                user['stage'] = NO_CONTACT
+                user['stage'] = self.NO_CONTACT
                 return user, "You're all set!  I've marked the {} as returned.".format(tool_string), None
 
             #...if not, we try again
