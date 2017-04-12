@@ -140,6 +140,37 @@ class ConversationHandler():
             user['stage'] = self.NO_CONTACT
             return user, response, None
 
+         user['stage'] == self.CONFIRM_TOOL_RETURN:
+            #...if so, we find out how long the loan will be
+            if message == 'yes':
+                # update tool to be returned
+                # update user tool list
+                tool_string = self.make_tool_string(user)
+                return user, "You're all set!  I've marked the {} as returned.".format(tool_string), None
+
+            #...if not, we try again
+            else:
+                user['temp_tools'] = []
+                user['stage'] = self.WANT_RETURN
+                return user, "Sorry I misunderstood.  What tool do you want to return?", None
+
+        if any(word in message for word in self.return_words) or user['stage'] == self.WANT_RETURN:
+            tools_returning = self.find_tool_names_in_message(message)
+            user['temp_tools'] = tools_returning
+
+            #if we found a tool name/s in the message
+            if len(tools_returning) > 0:
+                tool_string = self.make_tool_string(user)
+                print('tool string in line:', tool_string)
+                response = "Sounds like you want to return a {}, is that correct?".format(tool_string)
+                user['stage'] = self.CONFIRM_TOOL_RETURN
+                return user, response, ['yes','no']
+
+            #if we could not identify a tool name/s in the message
+            else:
+                user['stage'] = self.WANT_RETURN
+                return user, "What tool do you want to return?", None
+
         print('I GOT TO THE END, OH NO')
         return user
 
