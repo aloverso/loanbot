@@ -10,11 +10,13 @@ Welcome to loanbot's documentation!
    :caption: Contents:
 
    mission
+   server
+   messengerClient
+   databaseClient
+   conversationHandler
 
 .. automodule:: server
    :members:
-
-.. autofunction:: server.determine_response_and_send()
 
 Indices and tables
 ==================

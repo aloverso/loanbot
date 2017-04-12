@@ -88,6 +88,10 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="mission.html">mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">server.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="messengerClient.html">messengerClient.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="databaseClient.html">databaseClient.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversationHandler.html">conversationHandler.py</a></li>
 </ul>
 
             
@@ -156,13 +160,37 @@
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="mission.html">mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mission.html">mission</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mission.html#product-definition">Product Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mission.html#project-risks">Project Risks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mission.html#project-roadmap">Project Roadmap</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">server.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="messengerClient.html">messengerClient.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="databaseClient.html">databaseClient.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversationHandler.html">conversationHandler.py</a></li>
 </ul>
 </div>
 <span class="target" id="module-server"></span><dl class="function">
-<dt id="server.determine_response_and_send">
-<code class="descclassname">server.</code><code class="descname">determine_response_and_send</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.determine_response_and_send" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="server.check_if_due_and_remind">
+<code class="descclassname">server.</code><code class="descname">check_if_due_and_remind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.check_if_due_and_remind" title="Permalink to this definition">¶</a></dt>
+<dd><p>loops through the tools to determine whether they are due 
+in the next two hours, and sends the reminder to the user. uses import time</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="server.posthook">
+<code class="descclassname">server.</code><code class="descname">posthook</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.posthook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs when we receive a message from FB, includes the FB message 
+data and metadata. The entry point to our other functions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="server.verify">
+<code class="descclassname">server.</code><code class="descname">verify</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Facebook (FB) validating that we are in control of the app.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="indices-and-tables">
