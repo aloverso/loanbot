@@ -149,9 +149,23 @@ class ConversationHandler():
         if user['stage'] == self.CONFIRM_TOOL_RETURN:
             #...if so, we find out how long the loan will be
             if message == 'yes':
-                # update tool to be returned
-                # update user tool list
                 tool_string = self.make_tool_string(user)
+
+                # TODO: tell them if they're trying to return something they don't have
+                #update tool
+                for tool in user['temp_tools']:
+                    if tool['current_user'] == user['_id']:
+                        tool['current_user'] = None
+                        tool['current_due_date'] = None
+                    self.database_client.update_tool(tool)
+
+                    # update user tool list
+                    for checked_out_tool in user['tools']:
+                        if checked_out_tool['_id'] == tool['_id']:
+                            user['tools'].remove(checked_out_tool)
+
+                user['temp_tools'] = []
+                user['stage'] = NO_CONTACT
                 return user, "You're all set!  I've marked the {} as returned.".format(tool_string), None
 
             #...if not, we try again
