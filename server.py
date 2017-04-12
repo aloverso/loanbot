@@ -1,7 +1,7 @@
 import os
 from flask import Flask, redirect, render_template, request, url_for, Response
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.schedulers.blocking import BlockingScheduler
+# from apscheduler.schedulers.blocking import BlockingScheduler
 
 import time
 
@@ -84,7 +84,7 @@ def check_if_due_and_remind():
 # def timed_job():
 #     print('This job is run every three minutes.')
 
-apsched = BlockingScheduler()
+apsched = BackgroundScheduler()
 apsched.start()
 apsched.add_job(check_if_due_and_remind, 'interval', seconds=INTERVAL_TIME)
 
