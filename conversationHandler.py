@@ -9,9 +9,9 @@ class ConversationHandler():
     '''
     def __init__(self, database_client):
         self.database_client = database_client
-        self.checkout_words = ['check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed', 'want']
+        self.checkout_words = ['check', 'checking', 'checked', 'check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed', 'want']
         self.return_words = ['return', 'returned','returning','brought', 'bring', 'bringing', 'dropping', 'dropped', 'took back', 'left', 'done', 'done with', 'finished']
-        self.closing_words = ['thanks', 'thank', 'ok', 'bye']
+        self.closing_words = ['thanks', 'thank', 'ok', 'bye', 'goodbye', 'good-bye', 'okay', 'cancel', 'stop']
 
         self.NO_CONTACT = 0
         self.SENT_GREETING = 1
@@ -96,7 +96,7 @@ class ConversationHandler():
                 # id as checkout request
                 user['stage'] = self.WANT_CHECKOUT
 
-            if any(word in message for word in self.return_words):
+            elif any(word in message for word in self.return_words):
                 user['stage'] = self.WANT_RETURN
 
             else:
