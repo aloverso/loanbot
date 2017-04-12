@@ -51,6 +51,9 @@ class ConversationHandler():
     '''
     Parses the loan time quick reply message to store a due_date 
     for the tool/s the user wants to check out. uses import time
+    TODO: handle the case when we somehow get a different message 
+    than the quick reply options were expecting in a way other than 
+    making the due date "0"
     '''
     def parse_due_date(self, message):
         due_date = 0
