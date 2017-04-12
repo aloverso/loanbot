@@ -140,7 +140,7 @@ class ConversationHandler():
             user['stage'] = self.NO_CONTACT
             return user, response, None
 
-         user['stage'] == self.CONFIRM_TOOL_RETURN:
+        if user['stage'] == self.CONFIRM_TOOL_RETURN:
             #...if so, we find out how long the loan will be
             if message == 'yes':
                 # update tool to be returned
