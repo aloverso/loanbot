@@ -95,7 +95,7 @@ class ConversationHandler():
                 # send greeting and ask what tool
                 response = "Hi there! I'm the loan bot, what can I help you with?"
                 # user['stage'] = self.SENT_GREETING
-                # return user, response, None
+                return user, response, None
 
         #if the user wants to check out something
         if user['stage'] == self.WANT_CHECKOUT or user['stage'] == self.SENT_GREETING:
