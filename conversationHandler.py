@@ -85,11 +85,15 @@ class ConversationHandler():
             if any(word in message for word in self.checkout_words):
                 # id as checkout request
                 user['stage'] = self.WANT_CHECKOUT
+
+            if any(word in message for word in self.return_words):
+                user['stage'] = self.WANT_RETURN
+
             else:
                 # send greeting and ask what tool
-                response = "Hi there! I'm the loan bot, what tool would you like to check out?"
-                user['stage'] = self.SENT_GREETING
-                return user, response, None
+                response = "Hi there! I'm the loan bot, what can I help you with?"
+                # user['stage'] = self.SENT_GREETING
+                # return user, response, None
 
         #if the user wants to check out something
         if user['stage'] == self.WANT_CHECKOUT or user['stage'] == self.SENT_GREETING:
@@ -154,7 +158,7 @@ class ConversationHandler():
                 user['stage'] = self.WANT_RETURN
                 return user, "Sorry I misunderstood.  What tool do you want to return?", None
 
-        if any(word in message for word in self.return_words) or user['stage'] == self.WANT_RETURN:
+        if user['stage'] == self.WANT_RETURN:
             tools_returning = self.find_tool_names_in_message(message)
             user['temp_tools'] = tools_returning
 
