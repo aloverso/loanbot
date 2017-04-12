@@ -62,8 +62,9 @@ def check_if_due_and_remind():
     in the next two hours, and sends the reminder to the user. uses import time
     '''
     print('beginning check_if_due_and_remind')
+
     current_time = int(time.time())
-    tools_list = tools.find({})
+    tools_list = database_client.get_all_tools()
     for tool in tools_list:
         print('next tool')
         if tool['current_due_date']:
@@ -71,7 +72,7 @@ def check_if_due_and_remind():
             if int(tool['current_due_date'])-current_time<=(REMINDER_TIME):
                 reminder_message = 'Hi! The {} is due very soon, could you bring it back to the library please?'.format(tool['name'])
                 user_to_remind = users.find_one({'_id':tool['current_user']})
-                send_message(user_to_remind['sender_id'], reminder_message)
+                messenger_client.send_message(user_to_remind['sender_id'], reminder_message, None)
                 print('sent reminder message for {}'.format(tool['_id']))
 
 #TODO: let them say they have returned it, so it stops reminding them
