@@ -17,11 +17,11 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_find_tool_names_in_message(self):
+    def test_find_tools_in_message(self):
         test_message_1 = "I would like to borrow the drill and the screwdriver, please!"
         test_message_2 = "I want to take out a drill"
         test_message_3 = "I think it's cool that the library has tools"
-        self.assertEqual(conversation_handler.find_tool_names_in_message(test_message_1), [{
+        self.assertEqual(conversation_handler.find_tools_in_message(test_message_1), [{
     "_id":{
         "$oid": "58e5528dbf24551abe30660f"
     },
@@ -41,8 +41,8 @@ class TestCase(unittest.TestCase):
         "$oid": "58dfe761db78bb000bf7c88b"
     }
 }])
-        self.assertEqual(len(conversation_handler.find_tool_names_in_message(test_message_2)),1)
-        self.assertEqual(len(conversation_handler.find_tool_names_in_message(test_message_3)),0)
+        self.assertEqual(len(conversation_handler.find_tools_in_message(test_message_2)),1)
+        self.assertEqual(len(conversation_handler.find_tools_in_message(test_message_3)),0)
 
 
 if __name__ == '__main__':

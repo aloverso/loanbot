@@ -28,7 +28,7 @@ class ConversationHandler():
     searches through a message looking for names of tools from the tools database
     returns a list of tool names found, empty if none found
     '''
-    def find_tool_names_in_message(self, message):
+    def find_tools_in_message(self, message):
         found_tools = []
         tools_list = self.database_client.get_all_tools()
         #loop through list looking for tool names in message
@@ -115,7 +115,7 @@ class ConversationHandler():
 
         #if the user wants to check out something
         if user['stage'] == self.WANT_CHECKOUT or user['stage'] == self.SENT_GREETING:
-            tools_wanted = self.find_tool_names_in_message(message)
+            tools_wanted = self.find_tools_in_message(message)
             user['temp_tools'] = tools_wanted
             
             #if we found a tool name/s in the message
@@ -207,7 +207,7 @@ class ConversationHandler():
                 return user, "Sorry I misunderstood.  What tool do you want to return?", None
 
         if user['stage'] == self.WANT_RETURN:
-            tools_returning = self.find_tool_names_in_message(message)
+            tools_returning = self.find_tools_in_message(message)
             user['temp_tools'] = tools_returning
 
             #if we found a tool name/s in the message
@@ -224,18 +224,16 @@ class ConversationHandler():
                 return user, "What tool do you want to return?", None
 
         if user['stage'] == self.CHECK_AVAILABILITY:
-            tools_wanted = self.find_tool_names_in_message(message)
+            tools_wanted = self.find_tools_in_message(message)
             response_string = ''
-            for tool_name in tools_wanted:
-                tool = self.database_client.find_tool_by_name(tool_name)
+            for tool in tools_wanted:
                 available_modifier = 'not '
                 if tool['current_user'] == None:
                     available_modifier = ''
 
-                response_string += 'The {} is {}available and'.format(tool_name, available_modifier)
+                response_string += 'the {} is {}available and'.format(tool_name, available_modifier)
             response_string = response_string[:-5]
             return user, response_string, None
-
 
         print('I GOT TO THE END, OH NO')
         return user
