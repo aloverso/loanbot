@@ -146,7 +146,7 @@ class ConversationHandler():
                     return user, response, ['yes', '12 hours instead', '3 days instead']
 
                 else:
-                    response = "Sorry, the following tools are not available right now: {}".format(make_tool_string(tools_out))
+                    response = "Sorry, the following tools are not available right now: {}".format(self.make_tool_string(tools_out))
                     user['stage'] = self.NO_CONTACT
                     return user, response, None
 
