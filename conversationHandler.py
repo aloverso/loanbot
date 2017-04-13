@@ -11,7 +11,7 @@ class ConversationHandler():
         self.database_client = database_client
         self.checkout_words = ['check', 'checking', 'checked', 'check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed', 'want']
         self.return_words = ['return', 'returned','returning','brought', 'bring', 'bringing', 'dropping', 'dropped', 'took back', 'left', 'done', 'done with', 'finished']
-        self.closing_words = ['thanks', 'thank', 'ok', 'bye', 'goodbye', 'good-bye', 'okay', 'cancel', 'stop']
+        self.closing_words = ['thanks', 'thank', 'ok', 'bye', 'goodbye', 'good-bye', 'okay', 'cancel', 'stop', 'fuck']
         self.available_words = ['in', 'available', 'there']
 
         self.NO_CONTACT = 0
@@ -96,13 +96,13 @@ class ConversationHandler():
 
         #if the user is initiating contact
         if user['stage'] == self.NO_CONTACT:
-            # check for checkout words
-            if any(word in message for word in self.checkout_words):
+
+            if any(word in message for word in self.return_words):
+                user['stage'] = self.WANT_RETURN
+
+            elif any(word in message for word in self.checkout_words):
                 # id as checkout request
                 user['stage'] = self.WANT_CHECKOUT
-
-            elif any(word in message for word in self.return_words):
-                user['stage'] = self.WANT_RETURN
 
             elif any(word in message for word in self.available_words):
                 user['stage'] = self.CHECK_AVAILABILITY
@@ -233,6 +233,7 @@ class ConversationHandler():
 
                 response_string += 'the {} is {}available and '.format(tool['name'], available_modifier)
             response_string = response_string[:-5]
+            user['stage'] == self.NO_CONTACT
             return user, response_string, None
 
         print('I GOT TO THE END, OH NO')
