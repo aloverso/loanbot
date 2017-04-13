@@ -227,7 +227,7 @@ class ConversationHandler():
             tools_wanted = self.find_tool_names_in_message(message)
             response_string = ''
             for tool_name in tools_wanted:
-                tool = self.database_client.get_tool_by_name(tool_name)
+                tool = self.database_client.find_tool_by_name(tool_name)
                 available_modifier = 'not '
                 if tool['current_user'] == None:
                     available_modifier = ''
