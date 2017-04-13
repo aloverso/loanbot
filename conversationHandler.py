@@ -12,6 +12,7 @@ class ConversationHandler():
         self.checkout_words = ['check', 'checking', 'checked', 'check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed', 'want']
         self.return_words = ['return', 'returned','returning','brought', 'bring', 'bringing', 'dropping', 'dropped', 'took back', 'left', 'done', 'done with', 'finished']
         self.closing_words = ['thanks', 'thank', 'ok', 'bye', 'goodbye', 'good-bye', 'okay', 'cancel', 'stop']
+        self.available_words = ['in', 'available', 'there']
 
         self.NO_CONTACT = 0
         self.SENT_GREETING = 1
@@ -21,6 +22,7 @@ class ConversationHandler():
         self.CLOSING = 6
         self.WANT_RETURN = 7
         self.CONFIRM_TOOL_RETURN = 8
+        self.CHECK_AVAILABILITY = 9
     
     '''
     searches through a message looking for names of tools from the tools database
@@ -101,6 +103,9 @@ class ConversationHandler():
 
             elif any(word in message for word in self.return_words):
                 user['stage'] = self.WANT_RETURN
+
+            elif any(word in message for word in self.available_words):
+                user['stage'] = self.CHECK_AVAILABILITY
 
             else:
                 # send greeting and ask what tool
@@ -217,6 +222,20 @@ class ConversationHandler():
             else:
                 user['stage'] = self.WANT_RETURN
                 return user, "What tool do you want to return?", None
+
+        if user['stage'] == self.CHECK_AVAILABILITY:
+            tools_wanted = self.find_tool_names_in_message(message)
+            response_string = ''
+            for tool_name in tools_wanted:
+                tool = self.database_client.get_tool_by_name(tool_name)
+                available_modifier = 'not '
+                if tool['current_user'] == None:
+                    available_modifier = ''
+
+                response_string += 'The {} is {}available and'.format(tool_name, available_modifier)
+            response_string = response_string[:-5]
+            return user, response_string, None
+
 
         print('I GOT TO THE END, OH NO')
         return user
