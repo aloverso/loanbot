@@ -38,10 +38,10 @@ class ConversationHandler():
     '''
     creates a string of all tools a user is attempting to check out
     '''
-    def make_tool_string(self, user):
+    def make_tool_string(self, tool_list):
         tool_string = ''
-        print('temp_tools', user['temp_tools'])
-        for tool in user['temp_tools']:
+        print('temp_tools', tool_list)
+        for tool in tool_list:
             tool_string = tool_string + tool['name'] + " and " # allow for a list of tools
         # remove final and from string
         tool_string = tool_string[:-5]
@@ -115,7 +115,7 @@ class ConversationHandler():
             
             #if we found a tool name/s in the message
             if len(tools_wanted) > 0:
-                tool_string = self.make_tool_string(user)
+                tool_string = self.make_tool_string(user['temp_tools'])
                 print('tool string in line:', tool_string)
                 response = "Sounds like you want to check out a {}, is that correct?".format(tool_string)
                 user['stage'] = self.CONFIRM_TOOL
@@ -130,9 +130,25 @@ class ConversationHandler():
         if user['stage'] == self.CONFIRM_TOOL:
             #...if so, we find out how long the loan will be
             if message == 'yes':
-                response = "Great! Is a loan time of 1 day okay?"
-                user['stage'] = self.HOW_LONG
-                return user, response, ['yes', '12 hours instead', '3 days instead']
+
+                available = True
+                tools_out = []
+
+                # check if those tools are in right now
+                for tool in user['temp_tools']:
+                    if tool['current_user'] != None:
+                        available = False
+                        tools_out.append(tool)
+
+                if available:
+                    response = "Great! Is a loan time of 1 day okay?"
+                    user['stage'] = self.HOW_LONG
+                    return user, response, ['yes', '12 hours instead', '3 days instead']
+
+                else:
+                    response = "Sorry, the following tools are not available right now: {}".format(make_tool_string(tools_out))
+                    user['stage'] = self.NO_CONTACT
+                    return user, response, None
 
             #...if not, we try again
             else:
@@ -142,7 +158,7 @@ class ConversationHandler():
 
         #update user and tool db based on the loan time
         if user['stage'] == self.HOW_LONG:
-            tool_string = self.make_tool_string(user)
+            tool_string = self.make_tool_string(user['temp_tools'])
             for tool in user['temp_tools']:
                 tool['current_user'] = user['_id']
                 tool['current_due_date'] = self.parse_due_date(message)
@@ -160,7 +176,7 @@ class ConversationHandler():
         if user['stage'] == self.CONFIRM_TOOL_RETURN:
             #...if so, we find out how long the loan will be
             if message == 'yes':
-                tool_string = self.make_tool_string(user)
+                tool_string = self.make_tool_string(user['temp_tools'])
 
                 # TODO: tell them if they're trying to return something they don't have
                 #update tool
@@ -191,7 +207,7 @@ class ConversationHandler():
 
             #if we found a tool name/s in the message
             if len(tools_returning) > 0:
-                tool_string = self.make_tool_string(user)
+                tool_string = self.make_tool_string(user['temp_tools'])
                 print('tool string in line:', tool_string)
                 response = "Sounds like you want to return a {}, is that correct?".format(tool_string)
                 user['stage'] = self.CONFIRM_TOOL_RETURN
