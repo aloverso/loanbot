@@ -11,7 +11,7 @@ class ConversationHandler():
         self.database_client = database_client
         self.checkout_words = ['check', 'checking', 'checked', 'check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed', 'want']
         self.return_words = ['return', 'returned','returning','brought', 'bring', 'bringing', 'dropping', 'dropped', 'took back', 'left', 'done', 'done with', 'finished']
-        self.closing_words = ['thanks', 'thank', 'ok', 'bye', 'goodbye', 'good-bye', 'okay', 'cancel', 'stop', 'fuck']
+        self.closing_words = ['thanks', 'thank', 'ok', 'bye', 'goodbye', 'good-bye', 'okay', 'cancel', 'stop', 'fuck', 'yay']
         self.available_words = ['in', 'available', 'there']
 
         self.NO_CONTACT = 0
@@ -22,7 +22,6 @@ class ConversationHandler():
         self.CLOSING = 6
         self.WANT_RETURN = 7
         self.CONFIRM_TOOL_RETURN = 8
-        self.CHECK_AVAILABILITY = 9
     
     '''
     searches through a message looking for names of tools from the tools database
@@ -105,7 +104,16 @@ class ConversationHandler():
                 user['stage'] = self.WANT_CHECKOUT
 
             elif any(word in message for word in self.available_words):
-                user['stage'] = self.CHECK_AVAILABILITY
+                tools_wanted = self.find_tools_in_message(message)
+                response_string = ''
+                for tool in tools_wanted:
+                    available_modifier = 'not '
+                    if tool['current_user'] == None:
+                        available_modifier = ''
+
+                    response_string += 'the {} is {}available and '.format(tool['name'], available_modifier)
+                response_string = response_string[:-5]
+                return user, response_string, None
 
             else:
                 # send greeting and ask what tool
@@ -222,19 +230,6 @@ class ConversationHandler():
             else:
                 user['stage'] = self.WANT_RETURN
                 return user, "What tool do you want to return?", None
-
-        if user['stage'] == self.CHECK_AVAILABILITY:
-            tools_wanted = self.find_tools_in_message(message)
-            response_string = ''
-            for tool in tools_wanted:
-                available_modifier = 'not '
-                if tool['current_user'] == None:
-                    available_modifier = ''
-
-                response_string += 'the {} is {}available and '.format(tool['name'], available_modifier)
-            response_string = response_string[:-5]
-            user['stage'] == self.NO_CONTACT
-            return user, response_string, None
 
         print('I GOT TO THE END, OH NO')
         return user
