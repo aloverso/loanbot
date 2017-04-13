@@ -231,7 +231,7 @@ class ConversationHandler():
                 if tool['current_user'] == None:
                     available_modifier = ''
 
-                response_string += 'the {} is {}available and'.format(tool_name, available_modifier)
+                response_string += 'the {} is {}available and'.format(tool['name'], available_modifier)
             response_string = response_string[:-5]
             return user, response_string, None
 
