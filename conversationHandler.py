@@ -13,6 +13,7 @@ class ConversationHandler():
         self.return_words = ['return', 'returned','returning','brought', 'bring', 'bringing', 'dropping', 'dropped', 'took back', 'left', 'done', 'done with', 'finished']
         self.closing_words = ['thanks', 'thank', 'ok', 'bye', 'goodbye', 'good-bye', 'okay', 'cancel', 'stop', 'fuck', 'yay']
         self.available_words = ['in', 'available', 'there']
+        self.help_words = ['how do i', 'help', 'manual', 'documentation', 'how to']
 
         self.NO_CONTACT = 0
         self.SENT_GREETING = 1
@@ -89,9 +90,21 @@ class ConversationHandler():
         print('determine_response_for_user')
         
         if any(word in message for word in self.closing_words):
-                response = "Glad to help. Bye!"
-                user['stage'] = self.NO_CONTACT
-                return user, response, None
+            response = "Glad to help. Bye!"
+            user['stage'] = self.NO_CONTACT
+            return user, response, None
+        if any(word in message for word in self.help_words):
+            response = ''
+            tool_help_wanted = self.find_tools_in_message(message)
+            if len(tool_help_wanted) >0:
+                resource_links = ''
+                for tool in tool_help_wanted:
+                    resource_links += ' ' + tool['resource_link']
+                response ="I have some resources that might be helpful, here are some links:" + resource_links
+            else:
+                response ="I think you want help but I think a librarian would be more helpful, I've forwarded your question to them. They should reach out to you soon."
+                #TODO: send email to librarian here
+            return user, response, None
 
         #if the user is initiating contact
         if user['stage'] == self.NO_CONTACT:
