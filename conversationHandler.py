@@ -13,7 +13,7 @@ class ConversationHandler():
         self.return_words = ['return', 'returned','returning','brought', 'bring', 'bringing', 'dropping', 'dropped', 'took back', 'left', 'done', 'done with', 'finished']
         self.closing_words = ['thanks', 'thank', 'ok', 'bye', 'goodbye', 'good-bye', 'okay', 'cancel', 'stop', 'fuck', 'yay']
         self.available_words = ['in', 'available', 'there']
-        self.help_words = ['how do i', 'help', 'manual', 'documentation', 'how to']
+        self.help_words = ['how do i', 'help', 'manual', 'documentation', 'how to', 'trouble', 'confused']
 
         self.NO_CONTACT = 0
         self.SENT_GREETING = 1
@@ -115,13 +115,15 @@ class ConversationHandler():
             elif any(word in message for word in self.available_words):
                 tools_wanted = self.find_tools_in_message(message)
                 response_string = ''
-                for tool in tools_wanted:
-                    available_modifier = 'not '
-                    if tool['current_user'] == None:
-                        available_modifier = ''
-
-                    response_string += 'the {} is {}available and '.format(tool['name'], available_modifier)
-                response_string = response_string[:-5]
+                if len(tools_wanted) >0:
+                    for tool in tools_wanted:
+                        available_modifier = 'not '
+                        if tool['current_user'] == None:
+                            available_modifier = ''
+                        response_string += 'the {} is {}available and '.format(tool['name'], available_modifier)
+                    response_string = response_string[:-5]
+                else:
+                    response_string = "Sorry! I didn't understand that. What can I help you with?"
                 return user, response_string, None
 
             elif any(word in message for word in self.checkout_words):
