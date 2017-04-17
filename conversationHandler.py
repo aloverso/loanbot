@@ -99,10 +99,6 @@ class ConversationHandler():
             if any(word in message for word in self.return_words):
                 user['stage'] = self.WANT_RETURN
 
-            elif any(word in message for word in self.checkout_words):
-                # id as checkout request
-                user['stage'] = self.WANT_CHECKOUT
-
             elif any(word in message for word in self.available_words):
                 tools_wanted = self.find_tools_in_message(message)
                 response_string = ''
@@ -114,6 +110,10 @@ class ConversationHandler():
                     response_string += 'the {} is {}available and '.format(tool['name'], available_modifier)
                 response_string = response_string[:-5]
                 return user, response_string, None
+
+            elif any(word in message for word in self.checkout_words):
+                # id as checkout request
+                user['stage'] = self.WANT_CHECKOUT
 
             else:
                 # send greeting and ask what tool
