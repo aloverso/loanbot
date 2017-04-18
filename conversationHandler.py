@@ -12,7 +12,7 @@ class ConversationHandler():
         self.checkout_words = ['check', 'checking', 'checked', 'check out', 'checkout', 'checking out', 'take', 'took', 'taking', 'grabbing', 'grab', 'grabbed', 'checked out', 'borrow', 'borrowed', 'want']
         self.return_words = ['return', 'returned','returning','brought', 'bring', 'bringing', 'dropping', 'dropped', 'took back', 'left', 'done', 'done with', 'finished']
         self.closing_words = ['thanks', 'thank', 'ok', 'bye', 'goodbye', 'good-bye', 'okay', 'cancel', 'stop', 'fuck', 'yay']
-        self.available_words = ['in', 'available', 'there']
+        self.available_words = ['available', 'there']
         self.help_words = ['how do i', 'help', 'manual', 'documentation', 'how to', 'trouble', 'confused']
 
         self.NO_CONTACT = 0
