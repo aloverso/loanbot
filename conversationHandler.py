@@ -1,5 +1,5 @@
 import time
-
+import sendEmailToLibrarian
 '''
 A class that deals with the messages we receive from users
 '''
@@ -103,6 +103,7 @@ class ConversationHandler():
                 response ="I have some resources that might be helpful, here are some links:" + resource_links
             else:
                 response ="I think you want help but I think a librarian would be more helpful, I've forwarded your question to them. They should reach out to you soon."
+                sendEmailToLibrarian(user,message)
                 #TODO: send email to librarian here
             return user, response, None
 
