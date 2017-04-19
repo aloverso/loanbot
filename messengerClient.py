@@ -40,7 +40,7 @@ class MessengerClient:
                     # button click event
                     if messaging_event.get("postback"):
                         sender_id = messaging_event["sender"]["id"]
-                        message_payload = messaging_event["postback"]["payload"]
+                        message_payload = messaging_event["postback"]["payload"].lower()
                         return message_payload, sender_id
 
     '''
