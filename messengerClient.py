@@ -85,11 +85,15 @@ class MessengerClient:
         if num == 0:
             num = len(tools_list)
 
+        print('num: ', num)
+
         for tool in tools_list[:num]:
             elements_list.append({
                     "title": tool['name'],
                     "subtitle": tool['collection'] 
                 })
+
+        print('elements: ', elements_list)
 
         params = { "access_token": self.PAGE_ACCESS_TOKEN }
         headers = { "Content-Type": "application/json" }
