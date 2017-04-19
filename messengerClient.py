@@ -17,9 +17,11 @@ class MessengerClient:
     def handle_received_data(self, data):
         print('handing received data')
         if data["object"] == "page":
+            print(data['entry'])
             for entry in data["entry"]:
+                print('entry:', entry)
                 for messaging_event in entry["messaging"]:
-                    
+                    print('event: ', messaging_event)
                     # someone sent us a message
                     if messaging_event.get("message"):  
                        
