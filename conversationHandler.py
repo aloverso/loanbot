@@ -119,7 +119,9 @@ class ConversationHandler():
         if user['stage'] == self.SEND_LIST:
             user['stage'] = self.NO_CONTACT
             if message == 'view more':
+                print('said view more')
                 return user, "SEND_LIST 0", None # 0 is key in server.py means send all
+            print('past view more')
 
         #if the user is initiating contact
         if user['stage'] == self.NO_CONTACT:
