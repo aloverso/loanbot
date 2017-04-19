@@ -123,4 +123,7 @@ class MessengerClient:
         if r.status_code != 200:
             print(r.status_code, r.text)
 
-       
+    def get_users_name(self, sender_id):
+        r = requests.post("https://graph.facebook.com/v2.6/{}?fields=first_name,last_name&access_token={}".format(sender_id,self.PAGE_ACCESS_TOKEN))
+        user_dict = r.json()
+        return user_dict['first_name'] + " " + user_dict['last_name']
