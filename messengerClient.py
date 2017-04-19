@@ -41,8 +41,7 @@ class MessengerClient:
                     if messaging_event.get("postback"):
                         sender_id = messaging_event["sender"]["id"]
                         message_payload = messaging_event["postback"]["payload"]
-                        return sender_id, message_payload
-
+                        return message_payload, sender_id
 
     '''
     sends a custom FB message with message_text as the body, allows for quickreply options
