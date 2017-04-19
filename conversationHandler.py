@@ -121,7 +121,6 @@ class ConversationHandler():
             if message == 'view more':
                 response = "Check on the online database for the full tool list: https://olin.tind.io/"
                 return user, response, None
-            print('past view more')
 
         #if the user is initiating contact
         if user['stage'] == self.NO_CONTACT:
