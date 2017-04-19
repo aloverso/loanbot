@@ -158,7 +158,7 @@ class ConversationHandler():
             if message == 'yes':
                 for tool in user['temp_tools']:
                     borrower_id = tool['current_user']
-                    borrower_sender_id = database_client.find_user('_id', borrower_id)
+                    borrower_sender_id = self.database_client.find_user('_id', borrower_id)
 
                     # this is not the best code structure
                     # because we have this weird situation where the user we want to send a message to
