@@ -38,6 +38,10 @@ class ConversationHandler():
         for tool in tools_list:
             if tool['name'] in message:
                 found_tools.append(tool)
+            else:
+                for alt_name in tool['alternate_names']:
+                    if alt_name in message:
+                        found_tools.append(tool)
         return found_tools
 
     '''
