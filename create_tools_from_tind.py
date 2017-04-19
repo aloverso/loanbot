@@ -11,7 +11,7 @@ db = client.olinloanbot
 tools = db.tindtools
 
 class Tool:
-    def __init__(self, name, collection, resource_link, olin_id, alternate_names):
+    def __init__(self, name, collection, resource_link, olin_id, alternate_names, image_url):
         self.name = name
         self.current_user = None
         self.current_due_date = None
@@ -19,6 +19,7 @@ class Tool:
         self.resource_link = resource_link
         self.olin_id = olin_id
         self.alternate_names = alternate_names
+        self.image_url = image_url
 
 def parse_xml():
 
@@ -32,6 +33,7 @@ def parse_xml():
         resource_link = ''
         olin_id = ''
         alternate_names = []
+        image_url = ''
         
         for field in record:
 
@@ -47,6 +49,10 @@ def parse_xml():
             if field.attrib['tag'] == '500':
                 resource_link = field[0].text
 
+            # get image url 
+            if field.attrib['tag'] == '856':
+                image_url = field[0].text
+
             # get type
             if field.attrib['tag'] == '980':
                 if field[0].text != 'BIB':
@@ -56,8 +62,8 @@ def parse_xml():
             if field.attrib['tag'] == '246':
                 alternate_names.append(field[0].text.lower())
 
-        if olin_id != '':
-            new_tool = Tool(name, collection, resource_link, olin_id, alternate_names)
+        if image_url != '':
+            new_tool = Tool(name, collection, resource_link, olin_id, alternate_names, image_url)
             tools.insert_one(new_tool.__dict__)
 
 def create_tools(tools_list):

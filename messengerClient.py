@@ -92,6 +92,7 @@ class MessengerClient:
         for tool in tools_list[:4]:
             elements_list.append({
                     "title": tool['name'],
+                    "image_url": tool["image_url"],
                     "subtitle": tool['collection'] 
                 })
 
