@@ -150,7 +150,7 @@ class ConversationHandler():
                         user['stage'] = self.AVAILABILITY_QUESTION
                         quickreply = ['yes', 'no']
                 else:
-                    response_string = "SEND_LIST 5" #send 5
+                    response_string = "SEND_LIST 4" #send 4
                     user['stage'] = self.SEND_LIST
 
                 return user, response_string, quickreply

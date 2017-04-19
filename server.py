@@ -55,7 +55,8 @@ def posthook():
     print('response: ', response)
     if response[:9] == 'SEND_LIST':
         num = int(response[-1:])
-        messenger_client.send_list(updated_user['sender_id'], database_client.get_all_tools(), num)
+        tools_list = database_client.get_all_available_tools()
+        messenger_client.send_list(updated_user['sender_id'], tools_list, num)
     else:
         messenger_client.send_message(updated_user['sender_id'], response, quickreply)
     

@@ -35,6 +35,12 @@ class DatabaseClient():
 		return self.tools.find({})
 
 	'''
+	returns all non checked out tools in the Tools database
+	'''
+	def get_all_available_tools(self):
+		return self.tools.find({'current_user':None})
+
+	'''
 	finds a user from a given field, allowing to search by any field
 	'''
 	def find_user(self, field_name, field_value):
