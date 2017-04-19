@@ -5,11 +5,12 @@ import os
 the class sructure used for the User in the Mongo database
 '''
 class User:
-    def __init__(self, sender_id):
+    def __init__(self, sender_id, name):
         self.sender_id = sender_id
         self.tools = []
         self.temp_tools = []
         self.stage = 0
+        self.name = name
 
 '''
 A client which connects to Mongo and deals with Mongo database operations
@@ -56,10 +57,10 @@ class DatabaseClient():
 	either finds a user by sender_id, or creates that user in the database
 	returns the user
 	'''
-	def find_or_create_user(self, sender_id):
+	def find_or_create_user(self, sender_id, name):
 	    user = self.users.find_one({'sender_id':sender_id})
 	    if user == None:
-	        user = User(sender_id)
+	        user = User(sender_id, name)
 	        self.users.insert_one(user.__dict__)
 	    user = self.users.find_one({'sender_id':sender_id})
 	    return user
