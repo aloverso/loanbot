@@ -119,8 +119,8 @@ class ConversationHandler():
         if user['stage'] == self.SEND_LIST:
             user['stage'] = self.NO_CONTACT
             if message == 'view more':
-                print('said view more')
-                return user, "SEND_LIST 0", None # 0 is key in server.py means send all
+                response = "Check on the online database for the full tool list: https://olin.tind.io/"
+                return user, response, None
             print('past view more')
 
         #if the user is initiating contact
@@ -152,7 +152,7 @@ class ConversationHandler():
                         user['stage'] = self.AVAILABILITY_QUESTION
                         quickreply = ['yes', 'no']
                 else:
-                    response_string = "SEND_LIST 4" #send 4
+                    response_string = "SEND_LIST"
                     user['stage'] = self.SEND_LIST
 
                 return user, response_string, quickreply

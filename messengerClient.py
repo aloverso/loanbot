@@ -88,15 +88,11 @@ class MessengerClient:
             if r.status_code != 200:
                 print(r.status_code, r.text)
 
-    def send_list(self, recipient_id, tools_list, num):
+    def send_list(self, recipient_id, tools_list):
 
         elements_list = []
-        if num == 0:
-            num = len(tools_list)
 
-        print('num: ', num)
-
-        for tool in tools_list[:num]:
+        for tool in tools_list[:4]:
             elements_list.append({
                     "title": tool['name'],
                     "subtitle": tool['collection'] 
