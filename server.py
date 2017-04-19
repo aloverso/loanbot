@@ -48,7 +48,8 @@ def posthook():
 
     print('posthook')
     message_text, sender_id = messenger_client.handle_received_data(data)
-    user = database_client.find_or_create_user(sender_id)
+    name = messenger_client.get_users_name(sender_id)
+    user = database_client.find_or_create_user(sender_id, name)
     
     updated_user, response, quickreply = conversation_handler.determine_response_for_user(message_text, user)
     database_client.update_user(updated_user)

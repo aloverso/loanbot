@@ -103,8 +103,7 @@ class ConversationHandler():
                 response ="I have some resources that might be helpful, here are some links:" + resource_links
             else:
                 response ="I think you want help but I think a librarian would be more helpful, I've forwarded your question to them. They should reach out to you soon."
-                sendEmailToLibrarian(user,message)
-                #TODO: send email to librarian here
+                sendEmailToLibrarian.send_email_to_librarian(user['name'],message)
             return user, response, None
 
         #if the user is initiating contact
