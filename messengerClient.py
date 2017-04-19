@@ -78,3 +78,45 @@ class MessengerClient:
             r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
             if r.status_code != 200:
                 print(r.status_code, r.text)
+
+    def send_list(self, recipient_id, tools_list, num):
+
+        elements_list = []
+        if num == 0:
+            num = len(tools_list)
+
+        for tool in tools_list[:num]:
+            elements_list.append({
+                    "title": tool['name'],
+                    "subtitle": tool['collection'] 
+                })
+
+        params = { "access_token": self.PAGE_ACCESS_TOKEN }
+        headers = { "Content-Type": "application/json" }
+        data = json.dumps({
+            "recipient": {
+                "id": recipient_id
+            },
+            "message": {
+                "attachment": {
+                    "type": "template",
+                    "payload": {
+                        "template_type": "list",
+                        "top_element_style": "compact",
+                        "elements": elements_list,
+                         "buttons": [
+                            {
+                                "title": "View More",
+                                "type": "postback",
+                                "payload": "payload"                        
+                            }
+                        ]  
+                    }
+                }
+            }
+        })
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+        if r.status_code != 200:
+            print(r.status_code, r.text)
+
+       

@@ -53,9 +53,12 @@ def posthook():
     updated_user, response, quickreply = conversation_handler.determine_response_for_user(message_text, user)
     database_client.update_user(updated_user)
     print('response: ', response)
-    messenger_client.send_message(updated_user['sender_id'], response, quickreply)
+    if response[:9] == 'SEND_LIST':
+        num = int(response[-1:])
+        messenger_client.send_list(updated_user['sender_id'], database_client.get_all_tools(), num)
+    else:
+        messenger_client.send_message(updated_user['sender_id'], response, quickreply)
     
-
     return "ok", 200
 
 # @sched.scheduled_job('interval', seconds=INTERVAL_TIME)

@@ -26,6 +26,7 @@ class ConversationHandler():
         self.WANT_RETURN = 7
         self.CONFIRM_TOOL_RETURN = 8
         self.AVAILABILITY_QUESTION = 9
+        self.SEND_LIST = 10
     
     '''
     searches through a message looking for names of tools from the tools database
@@ -114,6 +115,12 @@ class ConversationHandler():
                 #TODO: send email to librarian here
             return user, response, None
 
+        # this needs to be located above the NO_CONTACT check
+        if user['stage'] == self.SEND_LIST:
+            user['stage'] = self.NO_CONTACT
+            if message == 'view more':
+                return user, "SEND_LIST 0", None # 0 is key in server.py means send all
+
         #if the user is initiating contact
         if user['stage'] == self.NO_CONTACT:
 
@@ -143,7 +150,9 @@ class ConversationHandler():
                         user['stage'] = self.AVAILABILITY_QUESTION
                         quickreply = ['yes', 'no']
                 else:
-                    response_string = "Sorry! I didn't understand that. What can I help you with?"
+                    response_string = "SEND_LIST 5" #send 5
+                    user['stage'] = self.SEND_LIST
+
                 return user, response_string, quickreply
 
             # checking out
