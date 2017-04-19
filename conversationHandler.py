@@ -1,5 +1,7 @@
 import time
 
+import messengerClient
+
 '''
 A class that deals with the messages we receive from users
 '''
@@ -23,6 +25,7 @@ class ConversationHandler():
         self.CLOSING = 6
         self.WANT_RETURN = 7
         self.CONFIRM_TOOL_RETURN = 8
+        self.AVAILABILITY_QUESTION = 9
     
     '''
     searches through a message looking for names of tools from the tools database
@@ -93,6 +96,7 @@ class ConversationHandler():
             response = "Glad to help. Bye!"
             user['stage'] = self.NO_CONTACT
             return user, response, None
+
         if any(word in message for word in self.help_words):
             response = ''
             tool_help_wanted = self.find_tools_in_message(message)
@@ -109,25 +113,37 @@ class ConversationHandler():
         #if the user is initiating contact
         if user['stage'] == self.NO_CONTACT:
 
+            # trying to return
             if any(word in message for word in self.return_words):
                 user['stage'] = self.WANT_RETURN
 
+            # checking availability status
             elif any(word in message for word in self.available_words):
                 tools_wanted = self.find_tools_in_message(message)
                 response_string = ''
+                quickreply = None
                 if len(tools_wanted) >0:
+                    unavailable_tools = []
                     for tool in tools_wanted:
-                        available_modifier = 'not '
-                        if tool['current_user'] == None:
-                            available_modifier = ''
+                        available_modifier = ''
+                        if tool['current_user'] != None:
+                            available_modifier = 'not '
+                            unavailable_tools.append(tool)
                         response_string += 'the {} is {}available and '.format(tool['name'], available_modifier)
                     response_string = response_string[:-5]
+
+                    if len(unavailable_tools) > 0:
+                        question = 'Would you like me to ask the tool borrowers to return them?'
+                        response_string = response_string + '. ' + question
+                        user['temp_tools'] = unavailable_tools
+                        user['stage'] = self.AVAILABILITY_QUESTION
+                        quickreply = ['yes', 'no']
                 else:
                     response_string = "Sorry! I didn't understand that. What can I help you with?"
-                return user, response_string, None
+                return user, response_string, quickreply
 
+            # checking out
             elif any(word in message for word in self.checkout_words):
-                # id as checkout request
                 user['stage'] = self.WANT_CHECKOUT
 
             else:
@@ -135,6 +151,30 @@ class ConversationHandler():
                 response = "Hi there! I'm the loan bot, what can I help you with?"
                 # user['stage'] = self.SENT_GREETING
                 return user, response, None
+
+        # if the user has asked about availability and we're finding out if we should
+        # send a reminder to the borrowers or not
+        if user['stage'] == self.AVAILABILITY_QUESTION:
+            if message == 'yes':
+                for tool in user['temp_tools']:
+                    borrower_id = tool['current_user']
+                    borrower_sender_id = database_client.find_user('_id', borrower_id)
+
+                    # this is not the best code structure
+                    # because we have this weird situation where the user we want to send a message to
+                    # is not the user who sent us a message
+                    messenger_client = messengerClient.MessengerClient()
+                    reminder = "Hey, someone was looking to borrow the {} that you have checked out. It'd be great if you could return it if you're almost done.".format(tool['name'])
+                    messenger_client.send_message(borrower_sender_id, reminder, None)
+
+                user['stage'] = self.NO_CONTACT
+                user['temp_tools'] = []
+                return user, "All set! Hopefully they'll be back soon.", None
+
+            else:
+                user['stage'] = self.NO_CONTACT
+                user['temp_tools'] = []
+                return user, "Very well. Is there something else I can help with?", None
 
         #if the user wants to check out something
         if user['stage'] == self.WANT_CHECKOUT or user['stage'] == self.SENT_GREETING:
