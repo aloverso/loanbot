@@ -22,11 +22,12 @@ class MessengerClient:
                 print('entry:', entry)
                 for messaging_event in entry["messaging"]:
                     print('event: ', messaging_event)
+
                     # someone sent us a message
                     if messaging_event.get("message"):  
                        
                         # the facebook ID of the person sending you the message
-                        sender_id = messaging_event["sender"]["id"]        
+                        sender_id = messaging_event["sender"]["id"]
                         
                         #if the message is text, send it to be parsed and find/add/update the user in the db.
                         if 'text' in messaging_event["message"]:
@@ -35,6 +36,13 @@ class MessengerClient:
 
                         else:
                             return None, sender_id
+
+                    # button click event
+                    if messaging_event.get("postback"):
+                        sender_id = messaging_event["sender"]["id"]
+                        message_payload = messaging_event["postback"]["payload"]
+                        return sender_id, message_payload
+
 
     '''
     sends a custom FB message with message_text as the body, allows for quickreply options
@@ -114,7 +122,7 @@ class MessengerClient:
                             {
                                 "title": "View More",
                                 "type": "postback",
-                                "payload": "payload"                        
+                                "payload": "View More"                        
                             }
                         ]  
                     }
