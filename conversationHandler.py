@@ -100,6 +100,7 @@ class ConversationHandler():
         if any(word in message for word in self.closing_words):
             response = "Glad to help. Bye!"
             user['stage'] = self.NO_CONTACT
+            print(user['stage'])
             return user, response, None
 
         if any(word in message for word in self.help_words):
@@ -118,6 +119,7 @@ class ConversationHandler():
         # this needs to be located above the NO_CONTACT check
         if user['stage'] == self.SEND_LIST:
             user['stage'] = self.NO_CONTACT
+            print(user['stage'])
             if message == 'view more':
                 response = "Check on the online database for the full tool list: https://olin.tind.io/"
                 return user, response, None
@@ -128,6 +130,7 @@ class ConversationHandler():
             # trying to return
             if any(word in message for word in self.return_words):
                 user['stage'] = self.WANT_RETURN
+                print(user['stage'])
 
             # checking availability status
             elif any(word in message for word in self.available_words):
@@ -149,16 +152,19 @@ class ConversationHandler():
                         response_string = response_string + '. ' + question
                         user['temp_tools'] = unavailable_tools
                         user['stage'] = self.AVAILABILITY_QUESTION
+                        print(user['stage'])
                         quickreply = ['yes', 'no']
                 else:
                     response_string = "SEND_LIST"
                     user['stage'] = self.SEND_LIST
+                    print(user['stage'])
 
                 return user, response_string, quickreply
 
             # checking out
             elif any(word in message for word in self.checkout_words):
                 user['stage'] = self.WANT_CHECKOUT
+                print(user['stage'])
 
             else:
                 # send greeting and ask what tool
@@ -182,11 +188,13 @@ class ConversationHandler():
                     messenger_client.send_message(borrower_sender_id, reminder, None)
 
                 user['stage'] = self.NO_CONTACT
+                print(user['stage'])
                 user['temp_tools'] = []
                 return user, "All set! Hopefully they'll be back soon.", None
 
             else:
                 user['stage'] = self.NO_CONTACT
+                print(user['stage'])
                 user['temp_tools'] = []
                 return user, "Very well. Is there something else I can help with?", None
 
@@ -201,11 +209,13 @@ class ConversationHandler():
                 print('tool string in line:', tool_string)
                 response = "Sounds like you want to check out a {}, is that correct?".format(tool_string)
                 user['stage'] = self.CONFIRM_TOOL
+                print(user['stage'])
                 return user, response, ['yes','no']
             
             #if we could not identify a tool name/s in the message
             else:
                 user['stage'] = self.NO_CONTACT
+                print(user['stage'])
                 return user, "What can I help you with?", None
 
         #we check that we parsed the correct tool/s...
@@ -225,17 +235,20 @@ class ConversationHandler():
                 if available:
                     response = "Great! Is a loan time of 1 day okay?"
                     user['stage'] = self.HOW_LONG
+                    print(user['stage'])
                     return user, response, ['yes', '12 hours instead', '3 days instead']
 
                 else:
                     response = "Sorry, the following tools are not available right now: {}".format(self.make_tool_string(tools_out))
                     user['stage'] = self.NO_CONTACT
+                    print(user['stage'])
                     return user, response, None
 
             #...if not, we try again
             else:
                 user['temp_tools'] = []
                 user['stage'] = self.NO_CONTACT
+                print(user['stage'])
                 return user, "Sorry I misunderstood.  What do you want to do?", None
 
         #update user and tool db based on the loan time
@@ -253,6 +266,7 @@ class ConversationHandler():
             response = "You're all set!  I'll remind you to return the {} before it's due.".format(tool_string)
             user['temp_tools'] = []
             user['stage'] = self.NO_CONTACT
+            print(user['stage'])
             return user, response, None
 
         if user['stage'] == self.CONFIRM_TOOL_RETURN:
@@ -275,12 +289,14 @@ class ConversationHandler():
 
                 user['temp_tools'] = []
                 user['stage'] = self.NO_CONTACT
+                print(user['stage'])
                 return user, "You're all set!  I've marked the {} as returned.".format(tool_string), None
 
             #...if not, we try again
             else:
                 user['temp_tools'] = []
                 user['stage'] = self.WANT_RETURN
+                print(user['stage'])
                 return user, "Sorry I misunderstood.  What tool do you want to return?", None
 
         if user['stage'] == self.WANT_RETURN:
@@ -293,11 +309,13 @@ class ConversationHandler():
                 print('tool string in line:', tool_string)
                 response = "Sounds like you want to return a {}, is that correct?".format(tool_string)
                 user['stage'] = self.CONFIRM_TOOL_RETURN
+                print(user['stage'])
                 return user, response, ['yes','no']
 
             #if we could not identify a tool name/s in the message
             else:
                 user['stage'] = self.WANT_RETURN
+                print(user['stage'])
                 return user, "What tool do you want to return?", None
 
         print('I GOT TO THE END, OH NO')
