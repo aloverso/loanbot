@@ -76,7 +76,8 @@ def check_if_due_and_remind():
         if tool['current_due_date']:
             print('tool had due date')
             if int(tool['current_due_date'])-current_time<=(REMINDER_TIME):
-                reminder_message = 'Hi! The {} is due very soon, could you bring it back to the library please?'.format(tool['name'])
+                #emoji in reminder_message is an alarm clock
+                reminder_message = '⏰ Hi! The {} is due very soon, could you bring it back to the library please?'.format(tool['name'])
                 user_to_remind = database_client.find_user('_id',tool['current_user'])
                 messenger_client.send_message(user_to_remind['sender_id'], reminder_message, None)
                 print('sent reminder message for {}'.format(tool['_id']))

@@ -111,8 +111,8 @@ class ConversationHandler():
                 for tool in tool_help_wanted:
                     resource_links += ' ' + tool['resource_link']
                 response ="I have some resources that might be helpful, here are some links:" + resource_links
-            else:
-                response ="I think you want help but I think a librarian would be more helpful, I've forwarded your question to them. They should reach out to you soon."
+            else: 
+                response ="😵 I have no clue how to help you with this one! I've passed your question along to the librarians. Hopefully they know what to do and will contact you soon. 😅"
                 #TODO: send email to librarian here
             return user, response, None
 
@@ -168,7 +168,7 @@ class ConversationHandler():
 
             else:
                 # send greeting and ask what tool
-                response = "Hi there! I'm the loan bot, what can I help you with?"
+                response = "😄 Hi there! I'm the loan bot, what can I help you with?"
                 # user['stage'] = self.SENT_GREETING
                 return user, response, None
 
@@ -187,7 +187,7 @@ class ConversationHandler():
                     reminder = "Hey, someone was looking to borrow the {} that you have checked out. It'd be great if you could return it if you're almost done.".format(tool['name'])
                     messenger_client.send_message(borrower_sender_id, reminder, None)
 
-                user['stage'] = self.NO_CONTACT
+                user['stage'] = self.NO
                 print(user['stage'])
                 user['temp_tools'] = []
                 return user, "All set! Hopefully they'll be back soon.", None
@@ -263,7 +263,7 @@ class ConversationHandler():
             # TODO: how to handle loan time if they are checking out more than one tool
 
             #finish the interaction and reset the conversation stage
-            response = "You're all set!  I'll remind you to return the {} before it's due.".format(tool_string)
+            response = "😎 You're all set!  I'll remind you to return the {} before it's due.".format(tool_string)
             user['temp_tools'] = []
             user['stage'] = self.NO_CONTACT
             print(user['stage'])
@@ -290,14 +290,14 @@ class ConversationHandler():
                 user['temp_tools'] = []
                 user['stage'] = self.NO_CONTACT
                 print(user['stage'])
-                return user, "You're all set!  I've marked the {} as returned.".format(tool_string), None
+                return user, "✨🏆✨You're all set!  I've marked the {} as returned.".format(tool_string), None
 
             #...if not, we try again
             else:
                 user['temp_tools'] = []
                 user['stage'] = self.WANT_RETURN
                 print(user['stage'])
-                return user, "Sorry I misunderstood.  What tool do you want to return?", None
+                return user, "😓 Sorry I misunderstood.  What tool do you want to return?", None
 
         if user['stage'] == self.WANT_RETURN:
             tools_returning = self.find_tools_in_message(message)
