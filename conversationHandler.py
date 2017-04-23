@@ -98,7 +98,7 @@ class ConversationHandler():
         print('determine_response_for_user')
         
         if any(word in message for word in self.closing_words):
-            response = "Glad to help. Bye!"
+            response = "Glad to help!"
             user['stage'] = self.NO_CONTACT
             print(user['stage'])
             return user, response, None
