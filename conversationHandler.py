@@ -186,8 +186,7 @@ class ConversationHandler():
                     messenger_client = messengerClient.MessengerClient()
                     reminder = "Hey, someone's interested in borrowing the {} that you have checked out. If you're done with it, could you bring it back?".format(tool['name'])
                     messenger_client.send_message(borrower_sender_id, reminder, None)
-
-                user['stage'] = self.NO
+                user['stage'] = self.NO_CONTACT
                 print(user['stage'])
                 user['temp_tools'] = []
                 return user, "All set! Hopefully they'll be back soon.", None
