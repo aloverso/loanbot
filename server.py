@@ -14,8 +14,8 @@ app = Flask(__name__)
 VALIDATION_TOKEN = os.environ['validationToken']
 
 
-REMINDER_TIME = 60 # should be 2 hours
-INTERVAL_TIME = 30 # should be 1 hour
+REMINDER_TIME = 90 # should be 2 hours
+INTERVAL_TIME = 100# should be 1 hour
 
 messenger_client = messengerClient.MessengerClient()
 database_client = databaseClient.DatabaseClient()

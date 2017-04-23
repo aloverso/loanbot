@@ -15,7 +15,7 @@ class ConversationHandler():
         self.return_words = ['return', 'returned','returning','brought', 'bring', 'bringing', 'dropping', 'dropped', 'took back', 'left', 'done', 'done with', 'finished']
         self.closing_words = ['thanks', 'thank', 'ok', 'bye', 'goodbye', 'good-bye', 'okay', 'cancel', 'stop', 'fuck', 'yay']
         self.available_words = ['available', 'there']
-        self.help_words = ['how do i', 'help', 'manual', 'documentation', 'how to', 'trouble', 'confused']
+        self.help_words = ['how do i', 'help', 'manual', 'documentation', 'how to', 'trouble', 'confused', 'what do i do with', 'what should i do', "i don't know"]
 
         self.NO_CONTACT = 0
         self.SENT_GREETING = 1
@@ -110,7 +110,7 @@ class ConversationHandler():
                 resource_links = ''
                 for tool in tool_help_wanted:
                     resource_links += ' ' + tool['resource_link']
-                response ="The Library gave me some resources that might be helpful, here are some links:" + resource_links
+                response ="The Library gave me some resources that might be helpful, see if this is useful:" + resource_links
             else: 
                 response ="😵 I have no clue how to help you with this one! I've passed your question along to the librarians. Hopefully they know what to do and will contact you soon. 😅"
                 #TODO: send email to librarian here
@@ -189,7 +189,7 @@ class ConversationHandler():
                 user['stage'] = self.NO_CONTACT
                 print(user['stage'])
                 user['temp_tools'] = []
-                return user, "All set! Hopefully they'll be back soon.", None
+                return user, "Alright, I let them know someone's looking for it! 🔎", None
 
             else:
                 user['stage'] = self.NO_CONTACT
