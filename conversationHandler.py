@@ -15,7 +15,7 @@ class ConversationHandler():
         self.return_words = ['return', 'returned','returning','brought', 'bring', 'bringing', 'dropping', 'dropped', 'took back', 'left', 'done', 'done with', 'finished']
         self.closing_words = ['thanks', 'thank', 'ok', 'bye', 'goodbye', 'good-bye', 'okay', 'cancel', 'stop', 'fuck', 'yay']
         self.available_words = ['available', 'there']
-        self.help_words = ['how do i', 'help', 'manual', 'documentation', 'how to', 'trouble', 'confused']
+        self.help_words = ['how do i', 'help', 'manual', 'documentation', 'how to', 'trouble', 'confused', 'what do i do with', 'what should i do', "i don't know"]
 
         self.NO_CONTACT = 0
         self.SENT_GREETING = 1
@@ -98,8 +98,9 @@ class ConversationHandler():
         print('determine_response_for_user')
         
         if any(word in message for word in self.closing_words):
-            response = "Glad to help. Bye!"
+            response = "Glad to help!"
             user['stage'] = self.NO_CONTACT
+            print(user['stage'])
             return user, response, None
 
         if any(word in message for word in self.help_words):
@@ -109,17 +110,18 @@ class ConversationHandler():
                 resource_links = ''
                 for tool in tool_help_wanted:
                     resource_links += ' ' + tool['resource_link']
-                response ="I have some resources that might be helpful, here are some links:" + resource_links
-            else:
-                response ="I think you want help but I think a librarian would be more helpful, I've forwarded your question to them. They should reach out to you soon."
-                sendEmailToLibrarian.send_email_to_librarian(user['name'],message)
+                response ="The Library gave me some resources that might be helpful, see if this is useful:" + resource_links
+            else: 
+                response ="😵 I have no clue how to help you with this one! I've passed your question along to the librarians. Hopefully they know what to do and will contact you soon. 😅"
+                #TODO: send email to librarian here
             return user, response, None
 
         # this needs to be located above the NO_CONTACT check
         if user['stage'] == self.SEND_LIST:
             user['stage'] = self.NO_CONTACT
+            print(user['stage'])
             if message == 'view more':
-                response = "Check on the online database for the full tool list: https://olin.tind.io/"
+                response = "Check The Library's online database for the full tool list: https://olin.tind.io/"
                 return user, response, None
 
         #if the user is initiating contact
@@ -128,6 +130,7 @@ class ConversationHandler():
             # trying to return
             if any(word in message for word in self.return_words):
                 user['stage'] = self.WANT_RETURN
+                print(user['stage'])
 
             # checking availability status
             elif any(word in message for word in self.available_words):
@@ -149,20 +152,23 @@ class ConversationHandler():
                         response_string = response_string + '. ' + question
                         user['temp_tools'] = unavailable_tools
                         user['stage'] = self.AVAILABILITY_QUESTION
+                        print(user['stage'])
                         quickreply = ['yes', 'no']
                 else:
                     response_string = "SEND_LIST"
                     user['stage'] = self.SEND_LIST
+                    print(user['stage'])
 
                 return user, response_string, quickreply
 
             # checking out
             elif any(word in message for word in self.checkout_words):
                 user['stage'] = self.WANT_CHECKOUT
+                print(user['stage'])
 
             else:
                 # send greeting and ask what tool
-                response = "Hi there! I'm the loan bot, what can I help you with?"
+                response = "😄 Hi there! I'm Loan Wrangler, what can I help you with?"
                 # user['stage'] = self.SENT_GREETING
                 return user, response, None
 
@@ -178,17 +184,18 @@ class ConversationHandler():
                     # because we have this weird situation where the user we want to send a message to
                     # is not the user who sent us a message
                     messenger_client = messengerClient.MessengerClient()
-                    reminder = "Hey, someone was looking to borrow the {} that you have checked out. It'd be great if you could return it if you're almost done.".format(tool['name'])
+                    reminder = "Hey, someone's interested in borrowing the {} that you have checked out. If you're done with it, could you bring it back?".format(tool['name'])
                     messenger_client.send_message(borrower_sender_id, reminder, None)
-
                 user['stage'] = self.NO_CONTACT
+                print(user['stage'])
                 user['temp_tools'] = []
-                return user, "All set! Hopefully they'll be back soon.", None
+                return user, "Alright, I let them know someone's looking for it! 🔎", None
 
             else:
                 user['stage'] = self.NO_CONTACT
+                print(user['stage'])
                 user['temp_tools'] = []
-                return user, "Very well. Is there something else I can help with?", None
+                return user, "☺️ Alrighty. Is there something else I can help with?", None
 
         #if the user wants to check out something
         if user['stage'] == self.WANT_CHECKOUT or user['stage'] == self.SENT_GREETING:
@@ -201,12 +208,14 @@ class ConversationHandler():
                 print('tool string in line:', tool_string)
                 response = "Sounds like you want to check out a {}, is that correct?".format(tool_string)
                 user['stage'] = self.CONFIRM_TOOL
+                print(user['stage'])
                 return user, response, ['yes','no']
             
             #if we could not identify a tool name/s in the message
             else:
                 user['stage'] = self.NO_CONTACT
-                return user, "What can I help you with?", None
+                print(user['stage'])
+                return user, "What can I do for ya?", None
 
         #we check that we parsed the correct tool/s...
         if user['stage'] == self.CONFIRM_TOOL:
@@ -225,18 +234,21 @@ class ConversationHandler():
                 if available:
                     response = "Great! Is a loan time of 1 day okay?"
                     user['stage'] = self.HOW_LONG
+                    print(user['stage'])
                     return user, response, ['yes', '12 hours instead', '3 days instead']
 
                 else:
-                    response = "Sorry, the following tools are not available right now: {}".format(self.make_tool_string(tools_out))
+                    response = "😓 Sorry, the following tools are not available right now: {}".format(self.make_tool_string(tools_out))
                     user['stage'] = self.NO_CONTACT
+                    print(user['stage'])
                     return user, response, None
 
             #...if not, we try again
             else:
                 user['temp_tools'] = []
                 user['stage'] = self.NO_CONTACT
-                return user, "Sorry I misunderstood.  What do you want to do?", None
+                print(user['stage'])
+                return user, "😵 Sorry I misunderstood.  What do you want to do?", None
 
         #update user and tool db based on the loan time
         if user['stage'] == self.HOW_LONG:
@@ -250,9 +262,10 @@ class ConversationHandler():
             # TODO: how to handle loan time if they are checking out more than one tool
 
             #finish the interaction and reset the conversation stage
-            response = "You're all set!  I'll remind you to return the {} before it's due.".format(tool_string)
+            response = "😎 You're all set!  I'll remind you to return the {} before it's due.".format(tool_string)
             user['temp_tools'] = []
             user['stage'] = self.NO_CONTACT
+            print(user['stage'])
             return user, response, None
 
         if user['stage'] == self.CONFIRM_TOOL_RETURN:
@@ -275,13 +288,15 @@ class ConversationHandler():
 
                 user['temp_tools'] = []
                 user['stage'] = self.NO_CONTACT
-                return user, "You're all set!  I've marked the {} as returned.".format(tool_string), None
+                print(user['stage'])
+                return user, "✨🏆✨ Thanks!!!!  I'll let The Library know the {} has returned.".format(tool_string), None
 
             #...if not, we try again
             else:
                 user['temp_tools'] = []
                 user['stage'] = self.WANT_RETURN
-                return user, "Sorry I misunderstood.  What tool do you want to return?", None
+                print(user['stage'])
+                return user, "😓 Sorry I misunderstood.  What tool do you want to return?", None
 
         if user['stage'] == self.WANT_RETURN:
             tools_returning = self.find_tools_in_message(message)
@@ -291,14 +306,16 @@ class ConversationHandler():
             if len(tools_returning) > 0:
                 tool_string = self.make_tool_string(user['temp_tools'])
                 print('tool string in line:', tool_string)
-                response = "Sounds like you want to return a {}, is that correct?".format(tool_string)
+                response = "You're returning a {}, is that right?".format(tool_string)
                 user['stage'] = self.CONFIRM_TOOL_RETURN
+                print(user['stage'])
                 return user, response, ['yes','no']
 
             #if we could not identify a tool name/s in the message
             else:
                 user['stage'] = self.WANT_RETURN
-                return user, "What tool do you want to return?", None
+                print(user['stage'])
+                return user, "Which tool did you want to return?", None
 
         print('I GOT TO THE END, OH NO')
         return user
