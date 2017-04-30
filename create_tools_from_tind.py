@@ -34,7 +34,7 @@ def parse_xml():
         olin_id = ''
         alternate_names = []
         image_url = ''
-        
+
         for field in record:
 
             # get record id
@@ -44,12 +44,12 @@ def parse_xml():
             # get title
             if field.attrib['tag'] == '245':
                 name = field[0].text.lower()
-            
-            # get references 
+
+            # get references
             if field.attrib['tag'] == '500':
                 resource_link = field[0].text
 
-            # get image url 
+            # get image url
             if field.attrib['tag'] == '856':
                 image_url = field[0].text
 

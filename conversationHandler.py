@@ -27,7 +27,7 @@ class ConversationHandler():
         self.CONFIRM_TOOL_RETURN = 8
         self.AVAILABILITY_QUESTION = 9
         self.SEND_LIST = 10
-    
+
     '''
     searches through a message looking for names of tools from the tools database
     returns a list of tool names found, empty if none found
@@ -59,10 +59,10 @@ class ConversationHandler():
         return tool_string
 
     '''
-    Parses the loan time quick reply message to store a due_date 
+    Parses the loan time quick reply message to store a due_date
     for the tool/s the user wants to check out. uses import time
-    TODO: handle the case when we somehow get a different message 
-    than the quick reply options were expecting in a way other than 
+    TODO: handle the case when we somehow get a different message
+    than the quick reply options were expecting in a way other than
     making the due date "0"
     '''
     def parse_due_date(self, message):
@@ -96,7 +96,7 @@ class ConversationHandler():
     '''
     def determine_response_for_user(self, message, user):
         print('determine_response_for_user')
-        
+
         if any(word in message for word in self.closing_words):
             response = "Glad to help!"
             user['stage'] = self.NO_CONTACT
@@ -111,12 +111,14 @@ class ConversationHandler():
                 for tool in tool_help_wanted:
                     resource_links += ' ' + tool['resource_link']
                 response ="The Library gave me some resources that might be helpful, see if this is useful:" + resource_links
-            else: 
+            else:
                 response ="😵 I have no clue how to help you with this one! I've passed your question along to the librarians. Hopefully they know what to do and will contact you soon. 😅"
                 #TODO: send email to librarian here
             return user, response, None
 
         # this needs to be located above the NO_CONTACT check
+        # because if they said anything that's NOT "view more", then
+        # it needs to be treated like a NO_CONTACT message context
         if user['stage'] == self.SEND_LIST:
             user['stage'] = self.NO_CONTACT
             print(user['stage'])
@@ -201,7 +203,7 @@ class ConversationHandler():
         if user['stage'] == self.WANT_CHECKOUT or user['stage'] == self.SENT_GREETING:
             tools_wanted = self.find_tools_in_message(message)
             user['temp_tools'] = tools_wanted
-            
+
             #if we found a tool name/s in the message
             if len(tools_wanted) > 0:
                 tool_string = self.make_tool_string(user['temp_tools'])
@@ -210,7 +212,7 @@ class ConversationHandler():
                 user['stage'] = self.CONFIRM_TOOL
                 print(user['stage'])
                 return user, response, ['yes','no']
-            
+
             #if we could not identify a tool name/s in the message
             else:
                 user['stage'] = self.NO_CONTACT

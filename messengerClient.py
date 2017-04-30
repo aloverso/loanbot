@@ -21,11 +21,11 @@ class MessengerClient:
                 for messaging_event in entry["messaging"]:
 
                     # someone sent us a message
-                    if messaging_event.get("message"):  
-                       
+                    if messaging_event.get("message"):
+
                         # the facebook ID of the person sending you the message
                         sender_id = messaging_event["sender"]["id"]
-                        
+
                         #if the message is text, send it to be parsed and find/add/update the user in the db.
                         if 'text' in messaging_event["message"]:
                             message_text = messaging_event["message"]["text"].lower()  # the message's text
@@ -93,7 +93,7 @@ class MessengerClient:
             elements_list.append({
                     "title": tool['name'],
                     "image_url": tool["image_url"],
-                    "subtitle": tool['collection'] 
+                    "subtitle": tool['collection']
                 })
 
         params = { "access_token": self.PAGE_ACCESS_TOKEN }
@@ -113,9 +113,9 @@ class MessengerClient:
                             {
                                 "title": "View More",
                                 "type": "postback",
-                                "payload": "View More"                        
+                                "payload": "View More"
                             }
-                        ]  
+                        ]
                     }
                 }
             }
