@@ -86,7 +86,7 @@ class fakeDatabaseClient():
 	'''
 	fake version of find_or_create_user
 	'''
-	def find_or_create_user(self, sender_id):
+	def find_or_create_user(self, sender_id, name):
 	    return users_list[0]
 
 	'''
