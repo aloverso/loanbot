@@ -9,19 +9,32 @@ Libraries are awesome because they want you to have what you want, when you want
 ![A list of reasons that loans of books, tools, and media equipment must be handled differently: 1 Different loan time. 2 Different loan frequency. 3 Different kind of help needed to use the item.](/LoanWranglerDemo.png "Why a loan chatbot?")
 
 ## Conversing With Loan Wrangler
-When you message Loan Wrangler, it will do its best to meet all your tool and media equipment loan needs. Since it is still a young bot, you will notice it doesn't have answers for everything! Here is an example conversation you might have: 
+When you message Loan Wrangler, it will do its best to meet all your tool and media equipment loan needs. Since it is still a young bot, you will notice it doesn't have answers for everything! Here is an example conversation you might have:
+
 ![Screenshot from a demo conversation with the chatbot. The user and bot exchange a greeting, then the user asks if the drill is available. The bot replies that the drill is not available, and offers to ask the person who borrowed it to bring it back. The user confirms that they wan this, and the bot says it has let the drill borrower know.](/greetingAndAvailability.png "Demo Conversation")
+
 At this point the bot would send a message to the user with the drill checked out, like "someone's looking for the drill, could you return it if you're done using it?" Once the drill is returned, the next user can check it out:
+
 ![Screenshot from a demo conversation with the chatbot. The user says they want the drill, and the bot confirms the item, then asks whether a loan time of 1 day is okay or whether 12 hours or 3 days would be better. The user chooses 1 day, and the bot says they're all set, it will remind them to return the drill before it is due.](/checkOutDrill.png "Demo Conversation")
+
 Shortly before the drill is due, the bot will send a reminder, and keep sending periodic reminders until the drill is returned.
+
 ![Screenshot from a demo conversation with the chatbot. The bot lets the user know that the drill is due soon, and asks them to bring it back to the library.](/returnPlease.png "Demo Conversation")
+
 When the user returns the drill, they can let the bot know it's back: 
+
 ![Screenshot from a demo conversation with the chatbot. The user says they returned the drill, and the bot confirms the tool, then thanks the user and says it will let The Library know the drill has returned.](/returnDrill.png "Demo Conversation")
+
 A user can also check out more than one tool at a time, and ask for help with tools:
+
 ![Screenshot from a demo conversation with the chatbot. In one message the user asks for three different tools. As before, teh bot confirms the three tools, offers loan times, and lets the user know that it will remind them to return the tools. The user then asks how to use a soldering iron. The bot offers a link to a youtube video.](/checkOutMultipleTools.png "Demo Conversation")
+
 Likewise, a user can return more than one tool at a time:
+
 ![Screenshot from a demo conversation with the chatbot. In one message the user says they have returned two tools, the sewing machine and the gimbal. The bot confirms the tools and thanks the user.](/returnTwoTools.png "Demo Conversation")
+
 If a user asks for help that Loan Wrangler isn't equipped to give, it redirects their question to the librarians (note that this feature is only partially complete).
+
 ![Screenshot from a demo conversation with the chatbot. The user asks what they should do with their life. The bot says it doesn't know how to help them and that it has passed their question on to the librarians, who will hopefully know what to do and will contact the user soon.](/helpwithmylife.png "Demo Conversation")
 
 Since the bot is still under development and not yet public, you will need to chat with it from the Library’s facebook account.  To be able to message it yourself, you will need to be added to the page’s admins by the Library.
@@ -53,8 +66,10 @@ Code written by Anne LoVerso (anneloverso.com) and Mimi Kome.  Help from Oliver 
 ## Developer
 ### Installation instructions:
 If you are an Olin user working on the project for Olin, you can contact Anne LoVerso or Mimi Kome to get the app secrets, which are required for changing the heroku deployment.
+
 If you are outside Olin looking to adapt the project, you will need to create your own Facebook app and secrets.
 Creating a Facebook app is well documented: https://developers.facebook.com/docs/messenger-platform/guides/quick-start
+
 Our code has the following app secrets:
 - validationToken is a Facebook variable that confirms for Facebook that you own the app that you say you own.  You can set this to anything
 - serverURL is the link to your hosted webapp; for us, heroku
@@ -92,11 +107,16 @@ self.CONFIRM_TOOL_RETURN = 8
 self.AVAILABILITY_QUESTION = 9
 self.SEND_LIST = 10
 ```
+
 Additionally, our conversation handling works through “dumb” searching for keywords in user messages.  It does not (yet) use machine learning.  That’d be a pretty good idea though.  Currently, when parsing for words, we look for: checkout words, return words, closing words, availability words (asking if a tool is available), and help words.
+
 When adding to these word lists, keep in mind that the bot looks for that word anywhere in the user message, so choose them with care.  For example, at an earlier point in the project, we included the word “in” as an availability word, for the case of a user asking “is the camera in?”  The problem this presents is that it would see “in” in other words as well (for example, “I am checking out a camera”), which would be misinterpreted because the word “checking” also contains the word “in”.
+
 The `determine_response_for_user` function is the main part of this, and follows a mostly predictable structure.  It’s pretty much a list of if statements that determine a response based on user stage.  There are a couple important exceptions.
 The end of that function should never be reached, and if it is, it’s a bug.  It should be structured in a way that it returns before ever getting to the end of the function.
-The first chunk of the function is structured differently.  It looks like this (pseudo-code)
+
+The first chunk of the function is structured differently.  It looks like this (pseudo-code):
+
 ```
 if the message is a closing:
     Return a farewell
@@ -112,14 +132,19 @@ If the user stage is NO_CONTACT
     Else,     return that we don’t understand
 // other if-checks for user stages begin here
 ```
+
 The reason for this is that people should always be able to exit the conversation (closing words) or ask for help, no matter their stage.  Thus, these checks come before anything else.
+
 The SEND_LIST check needs to be above NO_CONTACT.  The user is in this stage if they just got sent the list of available tools with the “view more” button.  If they click that button, we handle that here.  But if they send a different message instead, we need to be able to handle that like a new conversation.  Hence setting the user stage to NO_CONTACT so that the message gets handled by the appropriate block.
+
 In NO_CONTACT, some parts of it set the user stage, such as identifying that the user wants to return or check out, so that it can be handled by the appropriate code block.  Other parts of it send a return message, if the message doesn’t require a stage change for the user.
+
 Basically, the ordering of these is very intentional so that a user can flow through if-blocks as appropriate, and checks come in the proper order.
 
 ### Making Additions
 Making additions to Loan Wrangler's conversational abilities mostly happens in the above `determine_response_for_user` function.  For example, let’s say we want to make a message path where if a user sends the word “olin” then Loan Wranger will only respond to further messages with the word “olin”.  It stops when a user says one of the default stop commands, of course.
 First, we would add a check to the NO_CONTACT if-block that changes the user stage if we see the start word “olin”:
+
 ```
 # checking out
             elif any(word in message for word in self.checkout_words):
@@ -136,7 +161,9 @@ First, we would add a check to the NO_CONTACT if-block that changes the user sta
                 return user, response, None
 
 ```
+
 This also requires us to define the new user stage in the constructor:
+
 ```
 ...
 self.CONFIRM_TOOL_RETURN = 8
@@ -145,11 +172,14 @@ self.CONFIRM_TOOL_RETURN = 8
     self.OLIN = 11 # NEW CODE
 
 ```
+
 Finally, we make an if-statement in the rest of the function call, for handling messages when the user is in the new stage:
+
 ```
 if user['stage'] == self.OLIN:
     return user, "olin", None
 ```
+
 Now Loan Wrangler would return the response "olin" to anything it was sent (except a stop word to end the conversation).
 
 If we wanted to make a better addition, this function might actually do some handling of the message received.
@@ -166,5 +196,6 @@ The structure of the return block is very specific; it returns a 3-part tuple:
 
 ## Operator
 The app workflow uses git and heroku.  The heroku is dependent on our Mongo database, which is hosted on mlabs.  Again, contact Anne or Mimi for login credentials.  We also have a webhook that connects us to [travis CI](https://travis-ci.org/aloverso/loanbot) but we have not been tending to that so it’s not passing at the moment.
+
 Loan Wrangler also relies on our Facebook page and its Messenger integration, which can be managed from the Facebook developers dashboard.  Both the Library Facebook account Lib Guru and Anne are admins of this page and can make changes.
-The Facebook page is not yet approved for public messaging, which means that in order for the bot to respond to a given user, they need to be listed as a Developer, Tester, or Administrator role on the Facebook developer app site.  When the app is public, this won’t be necessary.  It’s pretty easy to make it public; just submit an application for review on the Developer dashboard after making sure you’ve followed Facebook’s checkboxes, such as uploading a photo.
+The Facebook page is not yet approved for public messaging, which means that in order for the bot to respond to a given user, they need to be listed as a Developer, Tester, or Administrator role on the Facebook developer app site.  When the app is public, this won’t be necessary.  To make it public just submit an application for review on the Developer dashboard after making sure you’ve followed Facebook’s checkboxes, such as uploading a photo.
