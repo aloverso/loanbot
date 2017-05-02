@@ -3,12 +3,12 @@
 
 Loan Wrangler is a friendly chatbot, ready to help you with (almost) anything involving borrowing and using the library’s awesome tools and media equipment.
 
-## Marketing
+## Why a Loan Chatbot?
 Libraries are awesome because they want you to have what you want, when you want it, for free. This started with books, then digital resources, and now the possibilities are endless! For example, the Olin College library wants users to be able to borrow tools and media equipment. Since the current loan system wasn’t made for tools (which are different than books in a few key ways), we created a chatbot that can help library patrons check out, use, and return tools in a much more flexible, friendly, and fun way.
 
 ![A list of reasons that loans of books, tools, and media equipment must be handled differently: 1 Different loan time. 2 Different loan frequency. 3 Different kind of help needed to use the item.](/LoanWranglerDemo.png "Why a loan chatbot?")
 
-## User
+## Conversing With Loan Wrangler
 When you message Loan Wrangler, it will do its best to meet all your tool and media equipment loan needs. Since it is still a young bot, you will notice it doesn't have answers for everything! Here is an example conversation you might have: 
 ![Screenshot from a demo conversation with the chatbot. The user and bot exchange a greeting, then the user asks if the drill is available. The bot replies that the drill is not available, and offers to ask the person who borrowed it to bring it back. The user confirms that they wan this, and the bot says it has let the drill borrower know.](/greetingAndAvailability.png "Demo Conversation")
 At this point the bot would send a message to the user with the drill checked out, like "someone's looking for the drill, could you return it if you're done using it?" Once the drill is returned, the next user can check it out:
@@ -64,7 +64,7 @@ Our code has the following app secrets:
 
 When you install the code, run `sudo pip install requirements.txt` to install the required packages.  If you want to update the documentation, you will also need to run `sudo pip install requirements-dev.txt`.  Also, this project is written in Python 3, so if you’re not using a virtual environment, you should run those commands instead with `pip3`.
 
-### Technical documentation. 
+### The Bot Files 
 Our code contains four primary files:
 - `server.py` is the main application with the Flask routing structure.  It creates instances of the next three objects.
 - `messengerClient.py` defines a class for interfacing with the sending and receiving of Facebook messages.
@@ -159,10 +159,10 @@ The structure of the return block is very specific; it returns a 3-part tuple:
 3. The quickreply options.  This should either be `None` if no quickreply options are available, or a list of strings that represents the list of quickreply options.
 
 ###Future Work
-- We should expand tests.  Right now, testing coverage is low, and the most important functionalities to test (the `if` structure flow of the `conversationHandler`) are not being tested at all.  A good test suite might be some kind of matrix of responses and user stages, and testing that a given message begets a given response, depending on the user’s stage.  Part of this would also include getting our Travis CI up again, and actually using it as an evaluator of our app.
-- We should refactor.  It’s not a great structure to rely so heavily on placement of code, the way that having some `if` statements before others is crucial or it breaks the code.  This could probably be done better.
-- We should integrate with TIND.  Right now we’re pulling a tools list from TIND to populate our database, but that just parses XML, and only gets run when we execute it manually.  All the transactions occur solely in our database.  We should integrate with TIND’s self-check API so that the transactions are part of the library system.
-- We should be aware of security.  There are no checks as to whether a user is a member of the Olin community.  This should happen, through TIND users or another method.
+- Expand tests.  Right now, testing coverage is low, and the most important functionalities to test (the `if` structure flow of the `conversationHandler`) are not being tested at all.  A good test suite might be some kind of matrix of responses and user stages, and testing that a given message begets a given response, depending on the user’s stage.  Part of this would also include getting our Travis CI up again, and actually using it as an evaluator of our app.
+- Refactor.  It’s not a great structure to rely so heavily on placement of code, the way that having some `if` statements before others is crucial or it breaks the code.  This could probably be done better.
+- Integrate with TIND.  Right now we’re pulling a tools list from TIND to populate our database, but that just parses XML, and only gets run when we execute it manually.  All the transactions occur solely in our database.  We should integrate with TIND’s self-check API so that the transactions are part of the library system.
+- Security.  There are no checks as to whether a user is a member of the Olin community.  This should happen, through TIND users or another method.
 
 ## Operator
 The app workflow uses git and heroku.  The heroku is dependent on our Mongo database, which is hosted on mlabs.  Again, contact Anne or Mimi for login credentials.  We also have a webhook that connects us to [travis CI](https://travis-ci.org/aloverso/loanbot) but we have not been tending to that so it’s not passing at the moment.
