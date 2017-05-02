@@ -42,7 +42,8 @@ Since the bot is still under development and not yet public, you will need to ch
 As a user of the bot, check out the Project Manager section below to see a list of what the bot can currently do.
 
 ## Product Manager
-####Project Status
+#### Project Status
+
 Currently, the bot can:
 - Check out an item to a user
 - Accept a returned item
@@ -54,13 +55,13 @@ Currently, the bot can:
 
 We’ve been tracking bugs and new feature ideas on the GitHub issues page.
 
-####License
+#### License
 MIT License
 
-####Known bugs
+#### Known bugs
 The return reminders are currently done using a threaded interval timer.  There’s a current bug where the messages are sent twice instead of once, usually one second apart.  We spent a lot of time looking at it and have been unable to figure out why.
 
-####Credits and acknowledgement:
+#### Credits and acknowledgement:
 Code written by Anne LoVerso (anneloverso.com) and Mimi Kome.  Help from Oliver Steele, Jeff Goldenson, and Emily Ferrier.  Thanks to the rest of the Hacking the Library class.
 
 ## Developer
@@ -188,7 +189,7 @@ The structure of the return block is very specific; it returns a 3-part tuple:
 2. The response string that should be send to the user in the chat window.
 3. The quickreply options.  This should either be `None` if no quickreply options are available, or a list of strings that represents the list of quickreply options.
 
-###Future Work
+### Future Work
 - Expand tests.  Right now, testing coverage is low, and the most important functionalities to test (the `if` structure flow of the `conversationHandler`) are not being tested at all.  A good test suite might be some kind of matrix of responses and user stages, and testing that a given message begets a given response, depending on the user’s stage.  Part of this would also include getting our Travis CI up again, and actually using it as an evaluator of our app.
 - Refactor.  It’s not a great structure to rely so heavily on placement of code, the way that having some `if` statements before others is crucial or it breaks the code.  This could probably be done better.
 - Integrate with TIND.  Right now we’re pulling a tools list from TIND to populate our database, but that just parses XML, and only gets run when we execute it manually.  All the transactions occur solely in our database.  We should integrate with TIND’s self-check API so that the transactions are part of the library system.
